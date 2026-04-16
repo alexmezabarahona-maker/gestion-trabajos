@@ -6,458 +6,86 @@
   <title>Trabajos del Equipo</title>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <style>
-    :root {
-      --bg: #F7F6F2;
-      --surface: #FFFFFF;
-      --border: #E4E2D9;
-      --text: #1A1916;
-      --text-muted: #7A7870;
-      --accent: #2D5016;
-      --accent-light: #EAF3DE;
-      --pending-bg: #FEF4E4;
-      --pending-text: #7A4800;
-      --done-bg: #E6F3E6;
-      --done-text: #1A5C1A;
-      --danger: #C0392B;
-      --danger-bg: #FDF0EE;
-      --radius: 12px;
-      --radius-sm: 8px;
-    }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      font-family: 'DM Sans', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      padding: 0 0 80px;
-    }
-
-    /* HEADER */
-    .top-bar {
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
-      padding: 16px 20px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      position: sticky;
-      top: 0;
-      z-index: 50;
-    }
-
-    .top-bar h1 {
-      font-size: 17px;
-      font-weight: 600;
-      letter-spacing: -0.3px;
-    }
-
-    .top-bar .team-badge {
-      font-size: 11px;
-      font-family: 'DM Mono', monospace;
-      background: var(--accent-light);
-      color: var(--accent);
-      padding: 3px 10px;
-      border-radius: 20px;
-      font-weight: 500;
-    }
-
-    /* STATS */
-    .stats-row {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      padding: 16px 16px 0;
-    }
-
-    .stat-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 14px;
-      text-align: center;
-    }
-
-    .stat-num {
-      font-size: 22px;
-      font-weight: 600;
-      letter-spacing: -0.5px;
-      color: var(--text);
-    }
-
-    .stat-label {
-      font-size: 11px;
-      color: var(--text-muted);
-      margin-top: 3px;
-      font-family: 'DM Mono', monospace;
-    }
-
-    /* FILTERS */
-    .filters {
-      display: flex;
-      gap: 8px;
-      padding: 14px 16px;
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
-    }
-    .filters::-webkit-scrollbar { display: none; }
-
-    .filter-btn {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 7px 16px;
-      font-size: 13px;
-      font-family: 'DM Sans', sans-serif;
-      cursor: pointer;
-      color: var(--text-muted);
-      white-space: nowrap;
-      transition: all 0.15s;
-    }
-
-    .filter-btn.active {
-      background: var(--text);
-      color: #fff;
-      border-color: var(--text);
-    }
-
-    /* JOB CARDS */
-    .job-list {
-      padding: 0 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .job-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 16px;
-      transition: opacity 0.2s;
-    }
-
-    .job-card.done {
-      opacity: 0.6;
-    }
-
-    .job-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 12px;
-      margin-bottom: 10px;
-    }
-
-    .job-name {
-      font-size: 15px;
-      font-weight: 600;
-      letter-spacing: -0.2px;
-      line-height: 1.3;
-    }
-
-    .job-client {
-      font-size: 13px;
-      color: var(--text-muted);
-      margin-top: 3px;
-    }
-
-    .badge {
-      font-size: 11px;
-      font-family: 'DM Mono', monospace;
-      padding: 4px 10px;
-      border-radius: 20px;
-      white-space: nowrap;
-      flex-shrink: 0;
-    }
-
-    .badge-pending { background: var(--pending-bg); color: var(--pending-text); }
-    .badge-done { background: var(--done-bg); color: var(--done-text); }
-
-    .job-footer {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 8px;
-      padding-top: 10px;
-      border-top: 1px solid var(--border);
-    }
-
-    .job-meta {
-      display: flex;
-      gap: 14px;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-
-    .meta-item {
-      font-size: 13px;
-      color: var(--text-muted);
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .meta-item.value {
-      font-weight: 600;
-      color: var(--text);
-      font-family: 'DM Mono', monospace;
-      font-size: 14px;
-    }
-
-    .job-actions {
-      display: flex;
-      gap: 6px;
-    }
-
-    .btn-action {
-      font-size: 12px;
-      font-family: 'DM Sans', sans-serif;
-      padding: 5px 12px;
-      border-radius: var(--radius-sm);
-      border: 1px solid var(--border);
-      cursor: pointer;
-      background: transparent;
-      color: var(--text-muted);
-      transition: all 0.15s;
-    }
-
-    .btn-action:hover { background: var(--bg); }
-
-    .btn-complete {
-      background: var(--done-bg);
-      color: var(--done-text);
-      border-color: #B7D9B7;
-      font-weight: 500;
-    }
-
-    .btn-reopen {
-      background: var(--pending-bg);
-      color: var(--pending-text);
-      border-color: #F5D9A8;
-      font-weight: 500;
-    }
-
-    .btn-delete { color: var(--danger); border-color: #F5C6C2; }
-    .btn-delete:hover { background: var(--danger-bg); }
-
-    /* EMPTY */
-    .empty {
-      text-align: center;
-      padding: 60px 20px;
-      color: var(--text-muted);
-    }
-
-    .empty-icon {
-      font-size: 40px;
-      margin-bottom: 12px;
-      opacity: 0.4;
-    }
-
-    .empty p { font-size: 15px; }
-
-    /* FAB */
-    .fab {
-      position: fixed;
-      bottom: 24px;
-      right: 20px;
-      background: var(--text);
-      color: #fff;
-      border: none;
-      border-radius: 28px;
-      padding: 14px 22px;
-      font-size: 15px;
-      font-family: 'DM Sans', sans-serif;
-      font-weight: 600;
-      cursor: pointer;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-      z-index: 40;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      transition: transform 0.15s;
-    }
-
-    .fab:active { transform: scale(0.97); }
-
-    /* MODAL */
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.45);
-      z-index: 100;
-      display: flex;
-      align-items: flex-end;
-      justify-content: center;
-      padding: 0;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.2s;
-    }
-
-    .modal-overlay.open {
-      opacity: 1;
-      pointer-events: all;
-    }
-
-    .modal {
-      background: var(--surface);
-      border-radius: 20px 20px 0 0;
-      padding: 24px 20px 40px;
-      width: 100%;
-      max-width: 520px;
-      transform: translateY(100%);
-      transition: transform 0.25s cubic-bezier(0.32, 0.72, 0, 1);
-    }
-
-    .modal-overlay.open .modal {
-      transform: translateY(0);
-    }
-
-    .modal-handle {
-      width: 36px;
-      height: 4px;
-      background: var(--border);
-      border-radius: 2px;
-      margin: 0 auto 20px;
-    }
-
-    .modal-title {
-      font-size: 18px;
-      font-weight: 600;
-      margin-bottom: 20px;
-      letter-spacing: -0.3px;
-    }
-
-    .field {
-      margin-bottom: 14px;
-    }
-
-    .field label {
-      display: block;
-      font-size: 12px;
-      font-family: 'DM Mono', monospace;
-      color: var(--text-muted);
-      margin-bottom: 6px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .field input, .field select {
-      width: 100%;
-      padding: 11px 14px;
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      font-size: 15px;
-      font-family: 'DM Sans', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      outline: none;
-      transition: border-color 0.15s;
-    }
-
-    .field input:focus, .field select:focus {
-      border-color: var(--text);
-    }
-
-    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-
-    .modal-actions {
-      display: flex;
-      gap: 10px;
-      margin-top: 20px;
-    }
-
-    .btn-cancel-modal {
-      flex: 1;
-      padding: 13px;
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      background: transparent;
-      font-size: 15px;
-      font-family: 'DM Sans', sans-serif;
-      cursor: pointer;
-      color: var(--text-muted);
-    }
-
-    .btn-save-modal {
-      flex: 2;
-      padding: 13px;
-      border: none;
-      border-radius: var(--radius-sm);
-      background: var(--text);
-      color: #fff;
-      font-size: 15px;
-      font-family: 'DM Sans', sans-serif;
-      font-weight: 600;
-      cursor: pointer;
-    }
-
-    .loading-msg {
-      text-align: center;
-      padding: 40px;
-      color: var(--text-muted);
-      font-size: 14px;
-    }
+    :root { --bg:#F7F6F2;--surface:#FFFFFF;--border:#E4E2D9;--text:#1A1916;--text-muted:#7A7870;--accent:#2D5016;--accent-light:#EAF3DE;--pending-bg:#FEF4E4;--pending-text:#7A4800;--done-bg:#E6F3E6;--done-text:#1A5C1A;--danger:#C0392B;--danger-bg:#FDF0EE;--radius:12px;--radius-sm:8px; }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:0 0 80px;}
+    .top-bar{background:var(--surface);border-bottom:1px solid var(--border);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
+    .top-bar h1{font-size:17px;font-weight:600;letter-spacing:-0.3px;}
+    .sync-indicator{font-size:11px;font-family:'DM Mono',monospace;color:var(--text-muted);display:flex;align-items:center;gap:5px;}
+    .sync-dot{width:7px;height:7px;border-radius:50%;background:#639922;}
+    .stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:16px 16px 0;}
+    .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;text-align:center;}
+    .stat-num{font-size:22px;font-weight:600;letter-spacing:-0.5px;}
+    .stat-label{font-size:11px;color:var(--text-muted);margin-top:3px;font-family:'DM Mono',monospace;}
+    .filters{display:flex;gap:8px;padding:14px 16px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+    .filters::-webkit-scrollbar{display:none;}
+    .filter-btn{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:7px 16px;font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer;color:var(--text-muted);white-space:nowrap;transition:all 0.15s;}
+    .filter-btn.active{background:var(--text);color:#fff;border-color:var(--text);}
+    .job-list{padding:0 16px;display:flex;flex-direction:column;gap:10px;}
+    .job-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;transition:opacity 0.2s;}
+    .job-card.done{opacity:0.6;}
+    .job-header{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:10px;}
+    .job-name{font-size:15px;font-weight:600;letter-spacing:-0.2px;line-height:1.3;}
+    .job-client{font-size:13px;color:var(--text-muted);margin-top:3px;}
+    .badge{font-size:11px;font-family:'DM Mono',monospace;padding:4px 10px;border-radius:20px;white-space:nowrap;flex-shrink:0;}
+    .badge-pending{background:var(--pending-bg);color:var(--pending-text);}
+    .badge-done{background:var(--done-bg);color:var(--done-text);}
+    .job-footer{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;padding-top:10px;border-top:1px solid var(--border);}
+    .job-meta{display:flex;gap:14px;align-items:center;flex-wrap:wrap;}
+    .meta-item{font-size:13px;color:var(--text-muted);}
+    .meta-item.value{font-weight:600;color:var(--text);font-family:'DM Mono',monospace;font-size:14px;}
+    .job-actions{display:flex;gap:6px;flex-wrap:wrap;}
+    .btn-action{font-size:12px;font-family:'DM Sans',sans-serif;padding:5px 12px;border-radius:var(--radius-sm);border:1px solid var(--border);cursor:pointer;background:transparent;color:var(--text-muted);transition:all 0.15s;}
+    .btn-action:hover{background:var(--bg);}
+    .btn-complete{background:var(--done-bg);color:var(--done-text);border-color:#B7D9B7;font-weight:500;}
+    .btn-reopen{background:var(--pending-bg);color:var(--pending-text);border-color:#F5D9A8;font-weight:500;}
+    .btn-delete{color:var(--danger);border-color:#F5C6C2;}
+    .btn-delete:hover{background:var(--danger-bg);}
+    .empty{text-align:center;padding:60px 20px;color:var(--text-muted);}
+    .empty-icon{font-size:40px;margin-bottom:12px;opacity:0.4;}
+    .loading-msg{text-align:center;padding:40px;color:var(--text-muted);font-size:14px;}
+    .fab{position:fixed;bottom:24px;right:20px;background:var(--text);color:#fff;border:none;border-radius:28px;padding:14px 22px;font-size:15px;font-family:'DM Sans',sans-serif;font-weight:600;cursor:pointer;box-shadow:0 4px 20px rgba(0,0,0,0.2);z-index:40;display:flex;align-items:center;gap:8px;transition:transform 0.15s;}
+    .fab:active{transform:scale(0.97);}
+    .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:100;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.2s;}
+    .modal-overlay.open{opacity:1;pointer-events:all;}
+    .modal{background:var(--surface);border-radius:20px 20px 0 0;padding:24px 20px 40px;width:100%;max-width:520px;transform:translateY(100%);transition:transform 0.25s cubic-bezier(0.32,0.72,0,1);}
+    .modal-overlay.open .modal{transform:translateY(0);}
+    .modal-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 20px;}
+    .modal-title{font-size:18px;font-weight:600;margin-bottom:20px;letter-spacing:-0.3px;}
+    .field{margin-bottom:14px;}
+    .field label{display:block;font-size:12px;font-family:'DM Mono',monospace;color:var(--text-muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px;}
+    .field input,.field select{width:100%;padding:11px 14px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:15px;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);outline:none;transition:border-color 0.15s;}
+    .field input:focus,.field select:focus{border-color:var(--text);}
+    .field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+    .modal-actions{display:flex;gap:10px;margin-top:20px;}
+    .btn-cancel-modal{flex:1;padding:13px;border:1px solid var(--border);border-radius:var(--radius-sm);background:transparent;font-size:15px;font-family:'DM Sans',sans-serif;cursor:pointer;color:var(--text-muted);}
+    .btn-save-modal{flex:2;padding:13px;border:none;border-radius:var(--radius-sm);background:var(--text);color:#fff;font-size:15px;font-family:'DM Sans',sans-serif;font-weight:600;cursor:pointer;}
   </style>
 </head>
 <body>
-
   <div class="top-bar">
     <h1>Trabajos del equipo</h1>
-    <span class="team-badge">compartido</span>
+    <div class="sync-indicator"><span class="sync-dot"></span> en tiempo real</div>
   </div>
-
   <div class="stats-row" id="statsRow"></div>
-
   <div class="filters">
-    <button class="filter-btn active" onclick="setFilter('todos', this)">Todos</button>
-    <button class="filter-btn" onclick="setFilter('Pendiente', this)">Pendientes</button>
-    <button class="filter-btn" onclick="setFilter('Completado', this)">Completados</button>
+    <button class="filter-btn active" onclick="setFilter('todos',this)">Todos</button>
+    <button class="filter-btn" onclick="setFilter('Pendiente',this)">Pendientes</button>
+    <button class="filter-btn" onclick="setFilter('Completado',this)">Completados</button>
   </div>
-
-  <div class="job-list" id="jobList">
-    <div class="loading-msg">Cargando trabajos...</div>
-  </div>
-
-  <button class="fab" onclick="openModal()">
-    <span style="font-size:18px;">+</span> Agregar trabajo
-  </button>
-
+  <div class="job-list" id="jobList"><div class="loading-msg">Conectando...</div></div>
+  <button class="fab" onclick="openModal()"><span style="font-size:18px;">+</span> Agregar trabajo</button>
   <div class="modal-overlay" id="modalOverlay" onclick="handleOverlayClick(event)">
-    <div class="modal" id="modal">
+    <div class="modal">
       <div class="modal-handle"></div>
       <div class="modal-title" id="modalTitle">Nuevo trabajo</div>
-
-      <div class="field">
-        <label>Nombre del trabajo</label>
-        <input type="text" id="fName" placeholder="Ej: Instalación eléctrica local 3" />
-      </div>
-      <div class="field">
-        <label>Cliente</label>
-        <input type="text" id="fClient" placeholder="Ej: Ferretería López" />
-      </div>
+      <div class="field"><label>Nombre del trabajo</label><input type="text" id="fName" placeholder="Ej: Instalación eléctrica local 3" /></div>
+      <div class="field"><label>Cliente</label><input type="text" id="fClient" placeholder="Ej: Ferretería López" /></div>
       <div class="field-row">
-        <div class="field">
-          <label>Valor ($)</label>
-          <input type="number" id="fValue" placeholder="0" inputmode="numeric" />
-        </div>
-        <div class="field">
-          <label>Fecha estimada</label>
-          <input type="date" id="fDate" />
-        </div>
+        <div class="field"><label>Valor ($)</label><input type="number" id="fValue" placeholder="0" inputmode="numeric" /></div>
+        <div class="field"><label>Fecha estimada</label><input type="date" id="fDate" /></div>
       </div>
-      <div class="field">
-        <label>Estado</label>
-        <select id="fStatus">
-          <option value="Pendiente">Pendiente</option>
-          <option value="Completado">Completado</option>
-        </select>
-      </div>
-
+      <div class="field"><label>Estado</label><select id="fStatus"><option value="Pendiente">Pendiente</option><option value="Completado">Completado</option></select></div>
       <div class="modal-actions">
         <button class="btn-cancel-modal" onclick="closeModal()">Cancelar</button>
         <button class="btn-save-modal" onclick="saveJob()">Guardar</button>
@@ -465,136 +93,78 @@
     </div>
   </div>
 
-  <script>
-    // ── Simple localStorage persistence (works offline too) ──
-    function loadJobs() {
-      try { return JSON.parse(localStorage.getItem('trabajos_equipo') || '[]'); }
-      catch(e) { return []; }
-    }
-    function persistJobs() {
-      localStorage.setItem('trabajos_equipo', JSON.stringify(jobs));
-    }
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, serverTimestamp, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-    let jobs = loadJobs();
+    const firebaseConfig = {
+      apiKey: "AIzaSyBmP4ZQ08f4Khmj9w969l_OI6tEr1sVLSw",
+      authDomain: "gestion-trabajos-79767.firebaseapp.com",
+      projectId: "gestion-trabajos-79767",
+      storageBucket: "gestion-trabajos-79767.firebasestorage.app",
+      messagingSenderId: "66422583579",
+      appId: "1:66422583579:web:261d5646386a1629ed23be"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const trabajosRef = collection(db, "trabajos");
+
+    let jobs = [];
     let currentFilter = 'todos';
     let editId = null;
 
     function fmt(v) { return '$' + Number(v).toLocaleString('es-CL'); }
-    function fmtDate(d) {
-      if (!d) return '';
-      const [y, m, day] = d.split('-');
-      return `${day}/${m}/${y}`;
-    }
+    function fmtDate(d) { if (!d) return ''; const [y,m,day] = d.split('-'); return `${day}/${m}/${y}`; }
 
     function renderStats() {
       const pend = jobs.filter(j => j.status === 'Pendiente').length;
-      const done = jobs.filter(j => j.status === 'Completado').length;
-      const total = jobs.filter(j => j.status === 'Completado')
-                        .reduce((a, j) => a + Number(j.value || 0), 0);
+      const total = jobs.filter(j => j.status === 'Completado').reduce((a,j) => a + Number(j.value||0), 0);
       document.getElementById('statsRow').innerHTML = `
-        <div class="stat-card">
-          <div class="stat-num">${jobs.length}</div>
-          <div class="stat-label">Total</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-num">${pend}</div>
-          <div class="stat-label">Pendientes</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-num" style="font-size:16px;">${fmt(total)}</div>
-          <div class="stat-label">Completado</div>
-        </div>
-      `;
+        <div class="stat-card"><div class="stat-num">${jobs.length}</div><div class="stat-label">Total</div></div>
+        <div class="stat-card"><div class="stat-num">${pend}</div><div class="stat-label">Pendientes</div></div>
+        <div class="stat-card"><div class="stat-num" style="font-size:15px;">${fmt(total)}</div><div class="stat-label">Completado</div></div>`;
     }
 
     function renderJobs() {
       const list = document.getElementById('jobList');
-      const filtered = currentFilter === 'todos'
-        ? jobs
-        : jobs.filter(j => j.status === currentFilter);
-
-      if (!filtered.length) {
-        list.innerHTML = `
-          <div class="empty">
-            <div class="empty-icon">📋</div>
-            <p>No hay trabajos aquí todavía</p>
-          </div>`;
-        return;
-      }
-
+      const filtered = currentFilter === 'todos' ? jobs : jobs.filter(j => j.status === currentFilter);
+      if (!filtered.length) { list.innerHTML = `<div class="empty"><div class="empty-icon">📋</div><p>No hay trabajos aquí todavía</p></div>`; return; }
       list.innerHTML = filtered.map(j => `
         <div class="job-card ${j.status === 'Completado' ? 'done' : ''}">
           <div class="job-header">
-            <div>
-              <div class="job-name">${j.name}</div>
-              ${j.client ? `<div class="job-client">${j.client}</div>` : ''}
-            </div>
-            <span class="badge ${j.status === 'Pendiente' ? 'badge-pending' : 'badge-done'}">
-              ${j.status}
-            </span>
+            <div><div class="job-name">${j.name}</div>${j.client ? `<div class="job-client">${j.client}</div>` : ''}</div>
+            <span class="badge ${j.status === 'Pendiente' ? 'badge-pending' : 'badge-done'}">${j.status}</span>
           </div>
           <div class="job-footer">
             <div class="job-meta">
               ${j.value ? `<span class="meta-item value">${fmt(j.value)}</span>` : ''}
-              ${j.date
-                ? `<span class="meta-item">📅 ${fmtDate(j.date)}</span>`
-                : `<span class="meta-item">Sin fecha</span>`}
+              ${j.date ? `<span class="meta-item">📅 ${fmtDate(j.date)}</span>` : '<span class="meta-item">Sin fecha</span>'}
             </div>
             <div class="job-actions">
               ${j.status === 'Pendiente'
-                ? `<button class="btn-action btn-complete" onclick="toggleStatus(${j.id})">✓ Completar</button>`
-                : `<button class="btn-action btn-reopen" onclick="toggleStatus(${j.id})">↩ Reabrir</button>`}
-              <button class="btn-action" onclick="editJob(${j.id})">Editar</button>
-              <button class="btn-action btn-delete" onclick="deleteJob(${j.id})">Eliminar</button>
+                ? `<button class="btn-action btn-complete" onclick="toggleStatus('${j.id}','${j.status}')">✓ Completar</button>`
+                : `<button class="btn-action btn-reopen" onclick="toggleStatus('${j.id}','${j.status}')">↩ Reabrir</button>`}
+              <button class="btn-action" onclick="editJob('${j.id}')">Editar</button>
+              <button class="btn-action btn-delete" onclick="deleteJob('${j.id}')">Eliminar</button>
             </div>
           </div>
-        </div>
-      `).join('');
+        </div>`).join('');
     }
 
     function render() { renderStats(); renderJobs(); }
 
-    function setFilter(f, btn) {
-      currentFilter = f;
-      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      renderJobs();
-    }
+    const q = query(trabajosRef, orderBy("createdAt", "desc"));
+    onSnapshot(q, (snapshot) => { jobs = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); render(); });
 
-    function toggleStatus(id) {
-      const j = jobs.find(x => x.id === id);
-      if (!j) return;
-      j.status = j.status === 'Pendiente' ? 'Completado' : 'Pendiente';
-      persistJobs(); render();
-    }
-
-    function deleteJob(id) {
-      if (!confirm('¿Eliminar este trabajo?')) return;
-      jobs = jobs.filter(j => j.id !== id);
-      persistJobs(); render();
-    }
-
-    function openModal() {
-      editId = null;
-      document.getElementById('modalTitle').textContent = 'Nuevo trabajo';
-      clearForm();
-      document.getElementById('modalOverlay').classList.add('open');
-    }
-
-    function closeModal() {
-      document.getElementById('modalOverlay').classList.remove('open');
-    }
-
-    function handleOverlayClick(e) {
-      if (e.target === document.getElementById('modalOverlay')) closeModal();
-    }
-
-    function clearForm() {
-      ['fName','fClient','fValue','fDate'].forEach(id => document.getElementById(id).value = '');
-      document.getElementById('fStatus').value = 'Pendiente';
-    }
-
-    function editJob(id) {
+    window.setFilter = (f, btn) => { currentFilter = f; document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); renderJobs(); };
+    window.toggleStatus = async (id, status) => { await updateDoc(doc(db,"trabajos",id), { status: status === 'Pendiente' ? 'Completado' : 'Pendiente' }); };
+    window.deleteJob = async (id) => { if (!confirm('¿Eliminar este trabajo?')) return; await deleteDoc(doc(db,"trabajos",id)); };
+    window.openModal = () => { editId = null; document.getElementById('modalTitle').textContent = 'Nuevo trabajo'; clearForm(); document.getElementById('modalOverlay').classList.add('open'); };
+    window.closeModal = () => { document.getElementById('modalOverlay').classList.remove('open'); };
+    window.handleOverlayClick = (e) => { if (e.target === document.getElementById('modalOverlay')) window.closeModal(); };
+    function clearForm() { ['fName','fClient','fValue','fDate'].forEach(id => document.getElementById(id).value = ''); document.getElementById('fStatus').value = 'Pendiente'; }
+    window.editJob = (id) => {
       const j = jobs.find(x => x.id === id); if (!j) return;
       editId = id;
       document.getElementById('modalTitle').textContent = 'Editar trabajo';
@@ -604,28 +174,15 @@
       document.getElementById('fDate').value = j.date || '';
       document.getElementById('fStatus').value = j.status;
       document.getElementById('modalOverlay').classList.add('open');
-    }
-
-    function saveJob() {
+    };
+    window.saveJob = async () => {
       const name = document.getElementById('fName').value.trim();
       if (!name) { alert('El nombre del trabajo es obligatorio'); return; }
-      const data = {
-        name,
-        client: document.getElementById('fClient').value.trim(),
-        value: document.getElementById('fValue').value || 0,
-        date: document.getElementById('fDate').value,
-        status: document.getElementById('fStatus').value,
-      };
-      if (editId) {
-        Object.assign(jobs.find(j => j.id === editId), data);
-      } else {
-        data.id = Date.now();
-        jobs.unshift(data);
-      }
-      persistJobs(); closeModal(); render();
-    }
-
-    render();
+      const data = { name, client: document.getElementById('fClient').value.trim(), value: document.getElementById('fValue').value || 0, date: document.getElementById('fDate').value, status: document.getElementById('fStatus').value };
+      if (editId) { await updateDoc(doc(db,"trabajos",editId), data); }
+      else { data.createdAt = serverTimestamp(); await addDoc(trabajosRef, data); }
+      window.closeModal();
+    };
   </script>
 </body>
 </html>
