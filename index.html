@@ -6,34 +6,71 @@
   <title>Trabajos del Equipo</title>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <style>
-    :root { --bg:#F7F6F2;--surface:#FFFFFF;--border:#E4E2D9;--text:#1A1916;--text-muted:#7A7870;--accent:#2D5016;--accent-light:#EAF3DE;--pending-bg:#FEF4E4;--pending-text:#7A4800;--done-bg:#E6F3E6;--done-text:#1A5C1A;--danger:#C0392B;--danger-bg:#FDF0EE;--radius:12px;--radius-sm:8px; }
+    :root{--bg:#F7F6F2;--surface:#FFFFFF;--border:#E4E2D9;--text:#1A1916;--text-muted:#7A7870;--pending-bg:#FEF4E4;--pending-text:#7A4800;--done-bg:#E6F3E6;--done-text:#1A5C1A;--danger:#C0392B;--danger-bg:#FDF0EE;--radius:12px;--radius-sm:8px;}
     *{box-sizing:border-box;margin:0;padding:0;}
-    body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:0 0 80px;}
+    body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:0 0 100px;}
     .top-bar{background:var(--surface);border-bottom:1px solid var(--border);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
     .top-bar h1{font-size:17px;font-weight:600;letter-spacing:-0.3px;}
     .sync-indicator{font-size:11px;font-family:'DM Mono',monospace;color:var(--text-muted);display:flex;align-items:center;gap:5px;}
     .sync-dot{width:7px;height:7px;border-radius:50%;background:#639922;}
-    .stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:16px 16px 0;}
+
+    /* RESUMEN FINANCIERO */
+    .resumen{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin:16px 16px 0;padding:16px;}
+    .resumen-title{font-size:13px;font-family:'DM Mono',monospace;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px;}
+    .resumen-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+    .resumen-item{text-align:center;padding:12px 8px;border-radius:var(--radius-sm);}
+    .resumen-item.ingresos{background:#E6F3E6;}
+    .resumen-item.gastos{background:#FEF4E4;}
+    .resumen-item.utilidad{background:#E6F1FB;}
+    .resumen-num{font-size:16px;font-weight:600;font-family:'DM Mono',monospace;letter-spacing:-0.5px;}
+    .resumen-num.ingresos{color:#1A5C1A;}
+    .resumen-num.gastos{color:#7A4800;}
+    .resumen-num.utilidad{color:#185FA5;}
+    .resumen-label{font-size:10px;color:var(--text-muted);margin-top:3px;font-family:'DM Mono',monospace;}
+
+    /* STATS */
+    .stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:12px 16px 0;}
     .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;text-align:center;}
     .stat-num{font-size:22px;font-weight:600;letter-spacing:-0.5px;}
     .stat-label{font-size:11px;color:var(--text-muted);margin-top:3px;font-family:'DM Mono',monospace;}
-    .filters{display:flex;gap:8px;padding:14px 16px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+
+    /* FILTERS */
+    .filters{display:flex;gap:8px;padding:12px 16px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
     .filters::-webkit-scrollbar{display:none;}
     .filter-btn{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:7px 16px;font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer;color:var(--text-muted);white-space:nowrap;transition:all 0.15s;}
     .filter-btn.active{background:var(--text);color:#fff;border-color:var(--text);}
+
+    /* CARDS */
     .job-list{padding:0 16px;display:flex;flex-direction:column;gap:10px;}
     .job-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;transition:opacity 0.2s;}
-    .job-card.done{opacity:0.6;}
+    .job-card.done{opacity:0.75;}
     .job-header{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:10px;}
     .job-name{font-size:15px;font-weight:600;letter-spacing:-0.2px;line-height:1.3;}
     .job-client{font-size:13px;color:var(--text-muted);margin-top:3px;}
-    .badge{font-size:11px;font-family:'DM Mono',monospace;padding:4px 10px;border-radius:20px;white-space:nowrap;flex-shrink:0;}
+    .badges{display:flex;gap:6px;flex-wrap:wrap;flex-shrink:0;}
+    .badge{font-size:11px;font-family:'DM Mono',monospace;padding:4px 10px;border-radius:20px;white-space:nowrap;}
     .badge-pending{background:var(--pending-bg);color:var(--pending-text);}
     .badge-done{background:var(--done-bg);color:var(--done-text);}
-    .job-footer{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;padding-top:10px;border-top:1px solid var(--border);}
-    .job-meta{display:flex;gap:14px;align-items:center;flex-wrap:wrap;}
+    .badge-team{background:#E6F1FB;color:#185FA5;}
+
+    /* GASTO ROW */
+    .gasto-row{display:flex;align-items:center;gap:8px;margin-top:10px;padding:10px 12px;background:var(--bg);border-radius:var(--radius-sm);border:1px solid var(--border);}
+    .gasto-label{font-size:12px;font-family:'DM Mono',monospace;color:var(--text-muted);white-space:nowrap;}
+    .gasto-input{flex:1;border:none;background:transparent;font-size:14px;font-family:'DM Mono',monospace;color:var(--text);outline:none;min-width:0;}
+    .gasto-input::placeholder{color:var(--text-muted);}
+    .gasto-save{font-size:12px;padding:4px 10px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface);cursor:pointer;color:var(--text-muted);white-space:nowrap;}
+    .gasto-save:hover{background:var(--done-bg);color:var(--done-text);}
+
+    .photos-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
+    .photo-thumb{width:64px;height:64px;object-fit:cover;border-radius:8px;border:1px solid var(--border);cursor:pointer;}
+    .photo-label{font-size:10px;font-family:'DM Mono',monospace;color:var(--text-muted);margin-top:4px;text-align:center;}
+    .photo-group{display:flex;flex-direction:column;align-items:center;}
+
+    .job-footer{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;padding-top:10px;border-top:1px solid var(--border);margin-top:10px;}
+    .job-meta{display:flex;gap:12px;align-items:center;flex-wrap:wrap;}
     .meta-item{font-size:13px;color:var(--text-muted);}
-    .meta-item.value{font-weight:600;color:var(--text);font-family:'DM Mono',monospace;font-size:14px;}
+    .meta-item.value{font-weight:600;color:#1A5C1A;font-family:'DM Mono',monospace;font-size:14px;}
+    .meta-item.gasto-val{font-weight:600;color:#7A4800;font-family:'DM Mono',monospace;font-size:14px;}
     .job-actions{display:flex;gap:6px;flex-wrap:wrap;}
     .btn-action{font-size:12px;font-family:'DM Sans',sans-serif;padding:5px 12px;border-radius:var(--radius-sm);border:1px solid var(--border);cursor:pointer;background:transparent;color:var(--text-muted);transition:all 0.15s;}
     .btn-action:hover{background:var(--bg);}
@@ -41,14 +78,18 @@
     .btn-reopen{background:var(--pending-bg);color:var(--pending-text);border-color:#F5D9A8;font-weight:500;}
     .btn-delete{color:var(--danger);border-color:#F5C6C2;}
     .btn-delete:hover{background:var(--danger-bg);}
+
     .empty{text-align:center;padding:60px 20px;color:var(--text-muted);}
     .empty-icon{font-size:40px;margin-bottom:12px;opacity:0.4;}
     .loading-msg{text-align:center;padding:40px;color:var(--text-muted);font-size:14px;}
+
     .fab{position:fixed;bottom:24px;right:20px;background:var(--text);color:#fff;border:none;border-radius:28px;padding:14px 22px;font-size:15px;font-family:'DM Sans',sans-serif;font-weight:600;cursor:pointer;box-shadow:0 4px 20px rgba(0,0,0,0.2);z-index:40;display:flex;align-items:center;gap:8px;transition:transform 0.15s;}
     .fab:active{transform:scale(0.97);}
+
+    /* MODAL */
     .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:100;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.2s;}
     .modal-overlay.open{opacity:1;pointer-events:all;}
-    .modal{background:var(--surface);border-radius:20px 20px 0 0;padding:24px 20px 40px;width:100%;max-width:520px;transform:translateY(100%);transition:transform 0.25s cubic-bezier(0.32,0.72,0,1);}
+    .modal{background:var(--surface);border-radius:20px 20px 0 0;padding:24px 20px 40px;width:100%;max-width:520px;transform:translateY(100%);transition:transform 0.25s cubic-bezier(0.32,0.72,0,1);max-height:90vh;overflow-y:auto;}
     .modal-overlay.open .modal{transform:translateY(0);}
     .modal-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 20px;}
     .modal-title{font-size:18px;font-weight:600;margin-bottom:20px;letter-spacing:-0.3px;}
@@ -57,9 +98,20 @@
     .field input,.field select{width:100%;padding:11px 14px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:15px;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);outline:none;transition:border-color 0.15s;}
     .field input:focus,.field select:focus{border-color:var(--text);}
     .field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+    .file-input-label{display:flex;align-items:center;gap:8px;padding:10px 14px;border:1px dashed var(--border);border-radius:var(--radius-sm);cursor:pointer;font-size:13px;color:var(--text-muted);background:var(--bg);}
+    .file-input-label:hover{border-color:var(--text);}
+    .file-input{display:none;}
+    .preview-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;}
+    .preview-thumb{width:56px;height:56px;object-fit:cover;border-radius:8px;border:1px solid var(--border);}
     .modal-actions{display:flex;gap:10px;margin-top:20px;}
     .btn-cancel-modal{flex:1;padding:13px;border:1px solid var(--border);border-radius:var(--radius-sm);background:transparent;font-size:15px;font-family:'DM Sans',sans-serif;cursor:pointer;color:var(--text-muted);}
     .btn-save-modal{flex:2;padding:13px;border:none;border-radius:var(--radius-sm);background:var(--text);color:#fff;font-size:15px;font-family:'DM Sans',sans-serif;font-weight:600;cursor:pointer;}
+    .uploading{font-size:13px;color:var(--text-muted);text-align:center;padding:8px;}
+
+    /* LIGHTBOX */
+    .lightbox{position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;}
+    .lightbox img{max-width:100%;max-height:90vh;border-radius:8px;}
+    .lightbox-close{position:absolute;top:16px;right:20px;color:#fff;font-size:28px;cursor:pointer;background:none;border:none;}
   </style>
 </head>
 <body>
@@ -67,14 +119,40 @@
     <h1>Trabajos del equipo</h1>
     <div class="sync-indicator"><span class="sync-dot"></span> en tiempo real</div>
   </div>
+
+  <!-- RESUMEN FINANCIERO -->
+  <div class="resumen">
+    <div class="resumen-title">Resumen trabajos completados</div>
+    <div class="resumen-grid">
+      <div class="resumen-item ingresos">
+        <div class="resumen-num ingresos" id="totalIngresos">$0</div>
+        <div class="resumen-label">Ingresos</div>
+      </div>
+      <div class="resumen-item gastos">
+        <div class="resumen-num gastos" id="totalGastos">$0</div>
+        <div class="resumen-label">Gastos</div>
+      </div>
+      <div class="resumen-item utilidad">
+        <div class="resumen-num utilidad" id="totalUtilidad">$0</div>
+        <div class="resumen-label">Utilidad</div>
+      </div>
+    </div>
+  </div>
+
   <div class="stats-row" id="statsRow"></div>
+
   <div class="filters">
     <button class="filter-btn active" onclick="setFilter('todos',this)">Todos</button>
     <button class="filter-btn" onclick="setFilter('Pendiente',this)">Pendientes</button>
     <button class="filter-btn" onclick="setFilter('Completado',this)">Completados</button>
+    <button class="filter-btn" onclick="setFilter('Equipo 1',this)">Equipo 1</button>
+    <button class="filter-btn" onclick="setFilter('Equipo 2',this)">Equipo 2</button>
   </div>
+
   <div class="job-list" id="jobList"><div class="loading-msg">Conectando...</div></div>
+
   <button class="fab" onclick="openModal()"><span style="font-size:18px;">+</span> Agregar trabajo</button>
+
   <div class="modal-overlay" id="modalOverlay" onclick="handleOverlayClick(event)">
     <div class="modal">
       <div class="modal-handle"></div>
@@ -85,17 +163,51 @@
         <div class="field"><label>Valor ($)</label><input type="number" id="fValue" placeholder="0" inputmode="numeric" /></div>
         <div class="field"><label>Fecha estimada</label><input type="date" id="fDate" /></div>
       </div>
-      <div class="field"><label>Estado</label><select id="fStatus"><option value="Pendiente">Pendiente</option><option value="Completado">Completado</option></select></div>
+      <div class="field-row">
+        <div class="field"><label>Equipo</label>
+          <select id="fTeam">
+            <option value="">Sin asignar</option>
+            <option value="Equipo 1">Equipo 1</option>
+            <option value="Equipo 2">Equipo 2</option>
+            <option value="Equipo 3">Equipo 3</option>
+          </select>
+        </div>
+        <div class="field"><label>Estado</label>
+          <select id="fStatus">
+            <option value="Pendiente">Pendiente</option>
+            <option value="Completado">Completado</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label>Fotos del trabajo</label>
+        <label class="file-input-label" for="fPhotos">📷 Seleccionar fotos</label>
+        <input class="file-input" type="file" id="fPhotos" accept="image/*" multiple onchange="previewFiles(this,'previewPhotos')" />
+        <div class="preview-row" id="previewPhotos"></div>
+      </div>
+      <div class="field">
+        <label>Fotos de facturas</label>
+        <label class="file-input-label" for="fFacturas">🧾 Seleccionar facturas</label>
+        <input class="file-input" type="file" id="fFacturas" accept="image/*" multiple onchange="previewFiles(this,'previewFacturas')" />
+        <div class="preview-row" id="previewFacturas"></div>
+      </div>
+      <div id="uploadStatus"></div>
       <div class="modal-actions">
         <button class="btn-cancel-modal" onclick="closeModal()">Cancelar</button>
-        <button class="btn-save-modal" onclick="saveJob()">Guardar</button>
+        <button class="btn-save-modal" id="btnSave" onclick="saveJob()">Guardar</button>
       </div>
     </div>
+  </div>
+
+  <div class="lightbox" id="lightbox" style="display:none;" onclick="closeLightbox()">
+    <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+    <img id="lightboxImg" src="" alt="foto" />
   </div>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, serverTimestamp, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyBmP4ZQ08f4Khmj9w969l_OI6tEr1sVLSw",
@@ -108,43 +220,83 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+    const storage = getStorage(app);
     const trabajosRef = collection(db, "trabajos");
 
     let jobs = [];
     let currentFilter = 'todos';
     let editId = null;
 
-    function fmt(v) { return '$' + Number(v).toLocaleString('es-CL'); }
-    function fmtDate(d) { if (!d) return ''; const [y,m,day] = d.split('-'); return `${day}/${m}/${y}`; }
+    function fmt(v){ return '$' + Number(v).toLocaleString('es-CL'); }
+    function fmtDate(d){ if(!d) return ''; const [y,m,day]=d.split('-'); return `${day}/${m}/${y}`; }
 
-    function renderStats() {
-      const pend = jobs.filter(j => j.status === 'Pendiente').length;
-      const total = jobs.filter(j => j.status === 'Completado').reduce((a,j) => a + Number(j.value||0), 0);
-      document.getElementById('statsRow').innerHTML = `
-        <div class="stat-card"><div class="stat-num">${jobs.length}</div><div class="stat-label">Total</div></div>
-        <div class="stat-card"><div class="stat-num">${pend}</div><div class="stat-label">Pendientes</div></div>
-        <div class="stat-card"><div class="stat-num" style="font-size:15px;">${fmt(total)}</div><div class="stat-label">Completado</div></div>`;
+    function renderResumen(){
+      const completados = jobs.filter(j=>j.status==='Completado');
+      const ingresos = completados.reduce((a,j)=>a+Number(j.value||0),0);
+      const gastos = completados.reduce((a,j)=>a+Number(j.gasto||0),0);
+      const utilidad = ingresos - gastos;
+      document.getElementById('totalIngresos').textContent = fmt(ingresos);
+      document.getElementById('totalGastos').textContent = fmt(gastos);
+      const uEl = document.getElementById('totalUtilidad');
+      uEl.textContent = fmt(utilidad);
+      uEl.style.color = utilidad >= 0 ? '#185FA5' : '#C0392B';
     }
 
-    function renderJobs() {
+    function renderStats(){
+      const pend = jobs.filter(j=>j.status==='Pendiente').length;
+      const done = jobs.filter(j=>j.status==='Completado').length;
+      document.getElementById('statsRow').innerHTML=`
+        <div class="stat-card"><div class="stat-num">${jobs.length}</div><div class="stat-label">Total</div></div>
+        <div class="stat-card"><div class="stat-num">${pend}</div><div class="stat-label">Pendientes</div></div>
+        <div class="stat-card"><div class="stat-num">${done}</div><div class="stat-label">Completados</div></div>`;
+    }
+
+    function renderJobs(){
       const list = document.getElementById('jobList');
-      const filtered = currentFilter === 'todos' ? jobs : jobs.filter(j => j.status === currentFilter);
-      if (!filtered.length) { list.innerHTML = `<div class="empty"><div class="empty-icon">📋</div><p>No hay trabajos aquí todavía</p></div>`; return; }
-      list.innerHTML = filtered.map(j => `
-        <div class="job-card ${j.status === 'Completado' ? 'done' : ''}">
+      let filtered = jobs;
+      if(currentFilter==='Equipo 1') filtered=jobs.filter(j=>j.team==='Equipo 1');
+      else if(currentFilter==='Equipo 2') filtered=jobs.filter(j=>j.team==='Equipo 2');
+      else if(currentFilter!=='todos') filtered=jobs.filter(j=>j.status===currentFilter);
+
+      if(!filtered.length){ list.innerHTML=`<div class="empty"><div class="empty-icon">📋</div><p>No hay trabajos aquí todavía</p></div>`; return; }
+
+      list.innerHTML = filtered.map(j=>`
+        <div class="job-card ${j.status==='Completado'?'done':''}">
           <div class="job-header">
-            <div><div class="job-name">${j.name}</div>${j.client ? `<div class="job-client">${j.client}</div>` : ''}</div>
-            <span class="badge ${j.status === 'Pendiente' ? 'badge-pending' : 'badge-done'}">${j.status}</span>
+            <div>
+              <div class="job-name">${j.name}</div>
+              ${j.client?`<div class="job-client">${j.client}</div>`:''}
+            </div>
+            <div class="badges">
+              <span class="badge ${j.status==='Pendiente'?'badge-pending':'badge-done'}">${j.status}</span>
+              ${j.team?`<span class="badge badge-team">${j.team}</span>`:''}
+            </div>
           </div>
+
+          <!-- Fotos -->
+          ${(j.photos&&j.photos.length)||(j.facturas&&j.facturas.length)?`
+          <div class="photos-row">
+            ${(j.photos||[]).map(url=>`<div class="photo-group"><img class="photo-thumb" src="${url}" onclick="openLightbox('${url}')" /><div class="photo-label">trabajo</div></div>`).join('')}
+            ${(j.facturas||[]).map(url=>`<div class="photo-group"><img class="photo-thumb" src="${url}" onclick="openLightbox('${url}')" /><div class="photo-label">factura</div></div>`).join('')}
+          </div>`:''}
+
+          <!-- Gasto manual -->
+          <div class="gasto-row">
+            <span class="gasto-label">Gasto $</span>
+            <input class="gasto-input" type="number" inputmode="numeric" placeholder="0" value="${j.gasto||''}" id="gasto_${j.id}" />
+            <button class="gasto-save" onclick="saveGasto('${j.id}')">Guardar</button>
+          </div>
+
           <div class="job-footer">
             <div class="job-meta">
-              ${j.value ? `<span class="meta-item value">${fmt(j.value)}</span>` : ''}
-              ${j.date ? `<span class="meta-item">📅 ${fmtDate(j.date)}</span>` : '<span class="meta-item">Sin fecha</span>'}
+              ${j.value?`<span class="meta-item value">↑ ${fmt(j.value)}</span>`:''}
+              ${j.gasto?`<span class="meta-item gasto-val">↓ ${fmt(j.gasto)}</span>`:''}
+              ${j.date?`<span class="meta-item">📅 ${fmtDate(j.date)}</span>`:'<span class="meta-item">Sin fecha</span>'}
             </div>
             <div class="job-actions">
-              ${j.status === 'Pendiente'
-                ? `<button class="btn-action btn-complete" onclick="toggleStatus('${j.id}','${j.status}')">✓ Completar</button>`
-                : `<button class="btn-action btn-reopen" onclick="toggleStatus('${j.id}','${j.status}')">↩ Reabrir</button>`}
+              ${j.status==='Pendiente'
+                ?`<button class="btn-action btn-complete" onclick="toggleStatus('${j.id}','${j.status}')">✓ Completar</button>`
+                :`<button class="btn-action btn-reopen" onclick="toggleStatus('${j.id}','${j.status}')">↩ Reabrir</button>`}
               <button class="btn-action" onclick="editJob('${j.id}')">Editar</button>
               <button class="btn-action btn-delete" onclick="deleteJob('${j.id}')">Eliminar</button>
             </div>
@@ -152,37 +304,81 @@
         </div>`).join('');
     }
 
-    function render() { renderStats(); renderJobs(); }
+    function render(){ renderResumen(); renderStats(); renderJobs(); }
 
-    const q = query(trabajosRef, orderBy("createdAt", "desc"));
-    onSnapshot(q, (snapshot) => { jobs = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); render(); });
+    const q = query(trabajosRef, orderBy("createdAt","desc"));
+    onSnapshot(q, (snapshot)=>{ jobs=snapshot.docs.map(d=>({id:d.id,...d.data()})); render(); });
 
-    window.setFilter = (f, btn) => { currentFilter = f; document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); renderJobs(); };
-    window.toggleStatus = async (id, status) => { await updateDoc(doc(db,"trabajos",id), { status: status === 'Pendiente' ? 'Completado' : 'Pendiente' }); };
-    window.deleteJob = async (id) => { if (!confirm('¿Eliminar este trabajo?')) return; await deleteDoc(doc(db,"trabajos",id)); };
-    window.openModal = () => { editId = null; document.getElementById('modalTitle').textContent = 'Nuevo trabajo'; clearForm(); document.getElementById('modalOverlay').classList.add('open'); };
-    window.closeModal = () => { document.getElementById('modalOverlay').classList.remove('open'); };
-    window.handleOverlayClick = (e) => { if (e.target === document.getElementById('modalOverlay')) window.closeModal(); };
-    function clearForm() { ['fName','fClient','fValue','fDate'].forEach(id => document.getElementById(id).value = ''); document.getElementById('fStatus').value = 'Pendiente'; }
-    window.editJob = (id) => {
-      const j = jobs.find(x => x.id === id); if (!j) return;
-      editId = id;
-      document.getElementById('modalTitle').textContent = 'Editar trabajo';
-      document.getElementById('fName').value = j.name;
-      document.getElementById('fClient').value = j.client || '';
-      document.getElementById('fValue').value = j.value || '';
-      document.getElementById('fDate').value = j.date || '';
-      document.getElementById('fStatus').value = j.status;
+    window.setFilter=(f,btn)=>{ currentFilter=f; document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); renderJobs(); };
+    window.toggleStatus=async(id,status)=>{ await updateDoc(doc(db,"trabajos",id),{status:status==='Pendiente'?'Completado':'Pendiente'}); };
+    window.deleteJob=async(id)=>{ if(!confirm('¿Eliminar este trabajo?')) return; await deleteDoc(doc(db,"trabajos",id)); };
+
+    window.saveGasto=async(id)=>{
+      const input=document.getElementById('gasto_'+id);
+      const val=Number(input.value||0);
+      await updateDoc(doc(db,"trabajos",id),{gasto:val});
+    };
+
+    window.openModal=()=>{ editId=null; document.getElementById('modalTitle').textContent='Nuevo trabajo'; clearForm(); document.getElementById('modalOverlay').classList.add('open'); };
+    window.closeModal=()=>{ document.getElementById('modalOverlay').classList.remove('open'); };
+    window.handleOverlayClick=(e)=>{ if(e.target===document.getElementById('modalOverlay')) window.closeModal(); };
+
+    function clearForm(){ ['fName','fClient','fValue','fDate'].forEach(id=>document.getElementById(id).value=''); document.getElementById('fStatus').value='Pendiente'; document.getElementById('fTeam').value=''; document.getElementById('fPhotos').value=''; document.getElementById('fFacturas').value=''; document.getElementById('previewPhotos').innerHTML=''; document.getElementById('previewFacturas').innerHTML=''; document.getElementById('uploadStatus').innerHTML=''; }
+
+    window.previewFiles=(input,previewId)=>{
+      const container=document.getElementById(previewId); container.innerHTML='';
+      Array.from(input.files).forEach(file=>{ if(!file.type.startsWith('image/')) return; const reader=new FileReader(); reader.onload=e=>{ const img=document.createElement('img'); img.src=e.target.result; img.className='preview-thumb'; container.appendChild(img); }; reader.readAsDataURL(file); });
+    };
+
+    async function uploadFiles(files,folder){
+      const urls=[];
+      for(const file of files){ const r=ref(storage,`${folder}/${Date.now()}_${file.name}`); await uploadBytes(r,file); urls.push(await getDownloadURL(r)); }
+      return urls;
+    }
+
+    window.editJob=(id)=>{
+      const j=jobs.find(x=>x.id===id); if(!j) return;
+      editId=id;
+      document.getElementById('modalTitle').textContent='Editar trabajo';
+      document.getElementById('fName').value=j.name;
+      document.getElementById('fClient').value=j.client||'';
+      document.getElementById('fValue').value=j.value||'';
+      document.getElementById('fDate').value=j.date||'';
+      document.getElementById('fStatus').value=j.status;
+      document.getElementById('fTeam').value=j.team||'';
+      document.getElementById('previewPhotos').innerHTML='';
+      document.getElementById('previewFacturas').innerHTML='';
+      document.getElementById('uploadStatus').innerHTML='';
       document.getElementById('modalOverlay').classList.add('open');
     };
-    window.saveJob = async () => {
-      const name = document.getElementById('fName').value.trim();
-      if (!name) { alert('El nombre del trabajo es obligatorio'); return; }
-      const data = { name, client: document.getElementById('fClient').value.trim(), value: document.getElementById('fValue').value || 0, date: document.getElementById('fDate').value, status: document.getElementById('fStatus').value };
-      if (editId) { await updateDoc(doc(db,"trabajos",editId), data); }
-      else { data.createdAt = serverTimestamp(); await addDoc(trabajosRef, data); }
+
+    window.saveJob=async()=>{
+      const name=document.getElementById('fName').value.trim();
+      if(!name){ alert('El nombre del trabajo es obligatorio'); return; }
+      const btn=document.getElementById('btnSave');
+      btn.disabled=true; btn.textContent='Guardando...';
+      document.getElementById('uploadStatus').innerHTML='<div class="uploading">Subiendo fotos...</div>';
+      const photoFiles=Array.from(document.getElementById('fPhotos').files);
+      const facturaFiles=Array.from(document.getElementById('fFacturas').files);
+      let photoUrls=[],facturaUrls=[];
+      try{ if(photoFiles.length) photoUrls=await uploadFiles(photoFiles,'fotos'); if(facturaFiles.length) facturaUrls=await uploadFiles(facturaFiles,'facturas'); }catch(e){ console.error(e); }
+      const data={ name, client:document.getElementById('fClient').value.trim(), value:document.getElementById('fValue').value||0, date:document.getElementById('fDate').value, status:document.getElementById('fStatus').value, team:document.getElementById('fTeam').value };
+      if(editId){
+        const existing=jobs.find(j=>j.id===editId);
+        data.photos=[...(existing.photos||[]),...photoUrls];
+        data.facturas=[...(existing.facturas||[]),...facturaUrls];
+        await updateDoc(doc(db,"trabajos",editId),data);
+      } else {
+        data.photos=photoUrls; data.facturas=facturaUrls; data.createdAt=serverTimestamp();
+        await addDoc(trabajosRef,data);
+      }
+      btn.disabled=false; btn.textContent='Guardar';
+      document.getElementById('uploadStatus').innerHTML='';
       window.closeModal();
     };
+
+    window.openLightbox=(url)=>{ document.getElementById('lightboxImg').src=url; document.getElementById('lightbox').style.display='flex'; };
+    window.closeLightbox=()=>{ document.getElementById('lightbox').style.display='none'; };
   </script>
 </body>
 </html>
