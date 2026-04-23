@@ -13,6 +13,8 @@
     .top-bar h1{font-size:17px;font-weight:600;letter-spacing:-0.3px;}
     .sync-indicator{font-size:11px;font-family:'DM Mono',monospace;color:var(--text-muted);display:flex;align-items:center;gap:5px;}
     .sync-dot{width:7px;height:7px;border-radius:50%;background:#639922;}
+
+    /* RESUMEN */
     .resumen{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin:16px 16px 0;padding:16px;}
     .resumen-title{font-size:13px;font-family:'DM Mono',monospace;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px;}
     .resumen-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
@@ -25,14 +27,36 @@
     .resumen-num.gastos{color:#7A4800;}
     .resumen-num.utilidad{color:#185FA5;}
     .resumen-label{font-size:10px;color:var(--text-muted);margin-top:3px;font-family:'DM Mono',monospace;}
+
+    /* GASTOS EXTRAS */
+    .extras-section{margin:12px 16px 0;}
+    .extras-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+    .extras-title{font-size:13px;font-family:'DM Mono',monospace;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;}
+    .btn-add-extra{font-size:12px;padding:4px 12px;border-radius:20px;border:1px solid var(--border);background:var(--surface);cursor:pointer;color:var(--text-muted);}
+    .btn-add-extra:hover{background:var(--pending-bg);color:var(--pending-text);}
+    .extras-list{display:flex;flex-direction:column;gap:6px;}
+    .extra-card{background:var(--surface);border:1px solid #F5D9A8;border-radius:var(--radius-sm);padding:10px 14px;display:flex;align-items:center;gap:10px;}
+    .extra-info{flex:1;min-width:0;}
+    .extra-desc{font-size:13px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .extra-date{font-size:11px;color:var(--text-muted);margin-top:2px;font-family:'DM Mono',monospace;}
+    .extra-amount{font-size:14px;font-weight:600;font-family:'DM Mono',monospace;color:#7A4800;white-space:nowrap;}
+    .btn-del-extra{background:none;border:none;cursor:pointer;color:#F5C6C2;font-size:16px;padding:2px 4px;flex-shrink:0;}
+    .btn-del-extra:hover{color:var(--danger);}
+    .extras-empty{font-size:13px;color:var(--text-muted);padding:8px 0;}
+
+    /* STATS */
     .stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:12px 16px 0;}
     .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;text-align:center;}
     .stat-num{font-size:22px;font-weight:600;letter-spacing:-0.5px;}
     .stat-label{font-size:11px;color:var(--text-muted);margin-top:3px;font-family:'DM Mono',monospace;}
+
+    /* FILTERS */
     .filters{display:flex;gap:8px;padding:12px 16px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
     .filters::-webkit-scrollbar{display:none;}
     .filter-btn{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:7px 16px;font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer;color:var(--text-muted);white-space:nowrap;transition:all 0.15s;}
     .filter-btn.active{background:var(--text);color:#fff;border-color:var(--text);}
+
+    /* CARDS */
     .job-list{padding:0 16px;display:flex;flex-direction:column;gap:10px;}
     .job-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;transition:opacity 0.2s;}
     .job-card.done{opacity:0.75;}
@@ -71,6 +95,8 @@
     .loading-msg{text-align:center;padding:40px;color:var(--text-muted);font-size:14px;}
     .fab{position:fixed;bottom:24px;right:20px;background:var(--text);color:#fff;border:none;border-radius:28px;padding:14px 22px;font-size:15px;font-family:'DM Sans',sans-serif;font-weight:600;cursor:pointer;box-shadow:0 4px 20px rgba(0,0,0,0.2);z-index:40;display:flex;align-items:center;gap:8px;transition:transform 0.15s;}
     .fab:active{transform:scale(0.97);}
+
+    /* MODALES */
     .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:100;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.2s;}
     .modal-overlay.open{opacity:1;pointer-events:all;}
     .modal{background:var(--surface);border-radius:20px 20px 0 0;padding:24px 20px 40px;width:100%;max-width:520px;transform:translateY(100%);transition:transform 0.25s cubic-bezier(0.32,0.72,0,1);max-height:90vh;overflow-y:auto;}
@@ -102,6 +128,7 @@
     <div class="sync-indicator"><span class="sync-dot"></span> en tiempo real</div>
   </div>
 
+  <!-- RESUMEN FINANCIERO -->
   <div class="resumen">
     <div class="resumen-title">Resumen trabajos completados</div>
     <div class="resumen-grid">
@@ -109,6 +136,15 @@
       <div class="resumen-item gastos"><div class="resumen-num gastos" id="totalGastos">$0</div><div class="resumen-label">Gastos</div></div>
       <div class="resumen-item utilidad"><div class="resumen-num utilidad" id="totalUtilidad">$0</div><div class="resumen-label">Utilidad</div></div>
     </div>
+  </div>
+
+  <!-- GASTOS EXTRAS -->
+  <div class="extras-section">
+    <div class="extras-header">
+      <div class="extras-title">Gastos extras generales</div>
+      <button class="btn-add-extra" onclick="openExtraModal()">+ Agregar gasto</button>
+    </div>
+    <div class="extras-list" id="extrasList"><div class="extras-empty">Sin gastos extras aún</div></div>
   </div>
 
   <div class="stats-row" id="statsRow"></div>
@@ -125,6 +161,7 @@
 
   <button class="fab" onclick="openModal()"><span style="font-size:18px;">+</span> Agregar trabajo</button>
 
+  <!-- MODAL TRABAJO -->
   <div class="modal-overlay" id="modalOverlay" onclick="handleOverlayClick(event)">
     <div class="modal">
       <div class="modal-handle"></div>
@@ -135,10 +172,7 @@
         <div class="field"><label>Valor ($)</label><input type="number" id="fValue" placeholder="0" inputmode="numeric" /></div>
         <div class="field"><label>Fecha estimada</label><input type="date" id="fDate" /></div>
       </div>
-      <div class="field">
-        <label>Hora estimada</label>
-        <input type="time" id="fTime" />
-      </div>
+      <div class="field"><label>Hora estimada</label><input type="time" id="fTime" /></div>
       <div class="field-row">
         <div class="field"><label>Equipo</label>
           <select id="fTeam">
@@ -175,6 +209,23 @@
     </div>
   </div>
 
+  <!-- MODAL GASTO EXTRA -->
+  <div class="modal-overlay" id="extraModalOverlay" onclick="handleExtraOverlayClick(event)">
+    <div class="modal">
+      <div class="modal-handle"></div>
+      <div class="modal-title">Nuevo gasto extra</div>
+      <div class="field"><label>Descripción</label><input type="text" id="eDesc" placeholder="Ej: Combustible, herramientas, etc." /></div>
+      <div class="field-row">
+        <div class="field"><label>Monto ($)</label><input type="number" id="eAmount" placeholder="0" inputmode="numeric" /></div>
+        <div class="field"><label>Fecha</label><input type="date" id="eDate" /></div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-cancel-modal" onclick="closeExtraModal()">Cancelar</button>
+        <button class="btn-save-modal" onclick="saveExtra()">Guardar</button>
+      </div>
+    </div>
+  </div>
+
   <div class="lightbox" id="lightbox" style="display:none;" onclick="closeLightbox()">
     <button class="lightbox-close" onclick="closeLightbox()">✕</button>
     <img id="lightboxImg" src="" alt="foto" />
@@ -198,8 +249,10 @@
     const db = getFirestore(app);
     const storage = getStorage(app);
     const trabajosRef = collection(db, "trabajos");
+    const extrasRef = collection(db, "gastos_extras");
 
     let jobs = [];
+    let extras = [];
     let currentFilter = 'todos';
     let editId = null;
 
@@ -207,16 +260,50 @@
     function fmtDate(d){ if(!d) return ''; const [y,m,day]=d.split('-'); return `${day}/${m}/${y}`; }
     function fmtTime(t){ if(!t) return ''; const [h,m]=t.split(':'); const hr=parseInt(h); return `${hr>12?hr-12:hr||12}:${m} ${hr>=12?'PM':'AM'}`; }
 
+    // Ordena jobs: primero por fecha desc, luego sin fecha al final
+    function sortJobs(list){
+      return [...list].sort((a,b)=>{
+        const da = a.date ? new Date(a.date+'T'+(a.time||'00:00')) : null;
+        const db2 = b.date ? new Date(b.date+'T'+(b.time||'00:00')) : null;
+        if(!da && !db2) return 0;
+        if(!da) return 1;
+        if(!db2) return -1;
+        return db2 - da;
+      });
+    }
+
     function renderResumen(){
-      const completados=jobs.filter(j=>j.status==='Completado');
-      const ingresos=completados.reduce((a,j)=>a+Number(j.value||0),0);
-      const gastos=completados.reduce((a,j)=>a+Number(j.gasto||0),0);
-      const utilidad=ingresos-gastos;
+      const completados = jobs.filter(j=>j.status==='Completado');
+      const ingresos = completados.reduce((a,j)=>a+Number(j.value||0),0);
+      const gastosTrabajos = completados.reduce((a,j)=>a+Number(j.gasto||0),0);
+      const gastosExtras = extras.reduce((a,e)=>a+Number(e.amount||0),0);
+      const gastos = gastosTrabajos + gastosExtras;
+      const utilidad = ingresos - gastos;
       document.getElementById('totalIngresos').textContent=fmt(ingresos);
       document.getElementById('totalGastos').textContent=fmt(gastos);
       const uEl=document.getElementById('totalUtilidad');
       uEl.textContent=fmt(utilidad);
       uEl.style.color=utilidad>=0?'#185FA5':'#C0392B';
+    }
+
+    function renderExtras(){
+      const list=document.getElementById('extrasList');
+      if(!extras.length){ list.innerHTML='<div class="extras-empty">Sin gastos extras aún</div>'; return; }
+      const sorted=[...extras].sort((a,b)=>{
+        const da=a.date?new Date(a.date):null;
+        const db2=b.date?new Date(b.date):null;
+        if(!da&&!db2) return 0; if(!da) return 1; if(!db2) return -1;
+        return db2-da;
+      });
+      list.innerHTML=sorted.map(e=>`
+        <div class="extra-card">
+          <div class="extra-info">
+            <div class="extra-desc">${e.desc}</div>
+            ${e.date?`<div class="extra-date">${fmtDate(e.date)}</div>`:''}
+          </div>
+          <div class="extra-amount">${fmt(e.amount)}</div>
+          <button class="btn-del-extra" onclick="deleteExtra('${e.id}')">✕</button>
+        </div>`).join('');
     }
 
     function renderStats(){
@@ -234,10 +321,9 @@
       if(currentFilter==='Equipo 1') filtered=jobs.filter(j=>j.team==='Equipo 1');
       else if(currentFilter==='Equipo 2') filtered=jobs.filter(j=>j.team==='Equipo 2');
       else if(currentFilter!=='todos') filtered=jobs.filter(j=>j.status===currentFilter);
-
-      if(!filtered.length){ list.innerHTML=`<div class="empty"><div class="empty-icon">📋</div><p>No hay trabajos aquí todavía</p></div>`; return; }
-
-      list.innerHTML=filtered.map(j=>`
+      const sorted=sortJobs(filtered);
+      if(!sorted.length){ list.innerHTML=`<div class="empty"><div class="empty-icon">📋</div><p>No hay trabajos aquí todavía</p></div>`; return; }
+      list.innerHTML=sorted.map(j=>`
         <div class="job-card ${j.status==='Completado'?'done':''}">
           <div class="job-header">
             <div>
@@ -249,19 +335,16 @@
               ${j.team?`<span class="badge badge-team">${j.team}</span>`:''}
             </div>
           </div>
-
           ${(j.photos&&j.photos.length)||(j.facturas&&j.facturas.length)?`
           <div class="photos-row">
             ${(j.photos||[]).map(url=>`<div class="photo-group"><img class="photo-thumb" src="${url}" onclick="openLightbox('${url}')" /><div class="photo-label">trabajo</div></div>`).join('')}
             ${(j.facturas||[]).map(url=>`<div class="photo-group"><img class="photo-thumb" src="${url}" onclick="openLightbox('${url}')" /><div class="photo-label">factura</div></div>`).join('')}
           </div>`:''}
-
           <div class="gasto-row">
             <span class="gasto-label">Gasto $</span>
             <input class="gasto-input" type="number" inputmode="numeric" placeholder="0" value="${j.gasto||''}" id="gasto_${j.id}" />
             <button class="gasto-save" onclick="saveGasto('${j.id}')">Guardar</button>
           </div>
-
           <div class="job-footer">
             <div class="job-meta">
               ${j.value?`<span class="meta-item value">↑ ${fmt(j.value)}</span>`:''}
@@ -279,11 +362,16 @@
         </div>`).join('');
     }
 
-    function render(){ renderResumen(); renderStats(); renderJobs(); }
+    function render(){ renderResumen(); renderExtras(); renderStats(); renderJobs(); }
 
+    // Listeners Firebase
     const q=query(trabajosRef,orderBy("createdAt","desc"));
     onSnapshot(q,(snapshot)=>{ jobs=snapshot.docs.map(d=>({id:d.id,...d.data()})); render(); });
 
+    const qExtras=query(extrasRef,orderBy("createdAt","desc"));
+    onSnapshot(qExtras,(snapshot)=>{ extras=snapshot.docs.map(d=>({id:d.id,...d.data()})); render(); });
+
+    // Trabajos
     window.setFilter=(f,btn)=>{ currentFilter=f; document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); renderJobs(); };
     window.toggleStatus=async(id,status)=>{ await updateDoc(doc(db,"trabajos",id),{status:status==='Pendiente'?'Completado':'Pendiente'}); };
     window.deleteJob=async(id)=>{ if(!confirm('¿Eliminar este trabajo?')) return; await deleteDoc(doc(db,"trabajos",id)); };
@@ -340,6 +428,21 @@
       document.getElementById('uploadStatus').innerHTML='';
       window.closeModal();
     };
+
+    // Gastos extras
+    window.openExtraModal=()=>{ ['eDesc','eAmount','eDate'].forEach(id=>document.getElementById(id).value=''); document.getElementById('extraModalOverlay').classList.add('open'); };
+    window.closeExtraModal=()=>{ document.getElementById('extraModalOverlay').classList.remove('open'); };
+    window.handleExtraOverlayClick=(e)=>{ if(e.target===document.getElementById('extraModalOverlay')) window.closeExtraModal(); };
+
+    window.saveExtra=async()=>{
+      const desc=document.getElementById('eDesc').value.trim();
+      const amount=document.getElementById('eAmount').value;
+      if(!desc||!amount){ alert('Descripción y monto son obligatorios'); return; }
+      await addDoc(extrasRef,{ desc, amount:Number(amount), date:document.getElementById('eDate').value, createdAt:serverTimestamp() });
+      window.closeExtraModal();
+    };
+
+    window.deleteExtra=async(id)=>{ if(!confirm('¿Eliminar este gasto extra?')) return; await deleteDoc(doc(db,"gastos_extras",id)); };
 
     window.openLightbox=(url)=>{ document.getElementById('lightboxImg').src=url; document.getElementById('lightbox').style.display='flex'; };
     window.closeLightbox=()=>{ document.getElementById('lightbox').style.display='none'; };
