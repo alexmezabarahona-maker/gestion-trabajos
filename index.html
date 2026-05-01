@@ -440,7 +440,7 @@
     window.deleteJob=async(id)=>{ if(!confirm('¿Eliminar este trabajo?')) return; await deleteDoc(doc(db,"trabajos",id)); };
     window.saveGasto=async(id)=>{ const val=Number(document.getElementById('gasto_'+id).value||0); await updateDoc(doc(db,"trabajos",id),{gasto:val}); };
 
-    // ── EXPORTAR EXCEL ──────────────────────────────────────────
+    // ── EXPORTAR EXCEL (SheetJS) ────────────────────────────────
     window.openExportModal=()=>{ document.getElementById('exportModalOverlay').classList.add('open'); };
     window.closeExportModal=()=>{ document.getElementById('exportModalOverlay').classList.remove('open'); };
     window.handleExportOverlayClick=(e)=>{ if(e.target===document.getElementById('exportModalOverlay')) window.closeExportModal(); };
@@ -454,95 +454,129 @@
       return lista.filter(j=> j.date && j.date.startsWith(mes));
     }
 
-    function csvEscape(v){ const s=String(v??''); return s.includes(',')||s.includes('"')||s.includes('\n')?`"${s.replace(/"/g,'""')}"`:s; }
+    function fechaProximoAnio(dateStr){
+      if(!dateStr) return '';
+      const [y,m,d]=dateStr.split('-');
+      return `${d}/${m}/${Number(y)+1}`;
+    }
 
-    function descargarCSV(contenido, nombre){
-      const BOM='\uFEFF';
-      const blob=new Blob([BOM+contenido],{type:'text/csv;charset=utf-8;'});
-      const url=URL.createObjectURL(blob);
-      const a=document.createElement('a'); a.href=url; a.download=nombre; a.click();
-      URL.revokeObjectURL(url);
+    function cargarSheetJS(cb){
+      if(window.XLSX){ cb(); return; }
+      const s=document.createElement('script');
+      s.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+      s.onload=cb; document.head.appendChild(s);
+    }
+
+    function estilosBase(ws, rango){
+      // SheetJS community no soporta estilos nativos; usamos ancho de columnas
+      return ws;
+    }
+
+    function setColWidths(ws, widths){
+      ws['!cols'] = widths.map(w=>({wch:w}));
     }
 
     window.exportarExcel=()=>{
-      const mes=getMonthLabel();
       const datos=filtrarPorMes(jobs);
       if(!datos.length){ alert('No hay trabajos para el período seleccionado.'); return; }
-      const sorted=sortJobs(datos);
-      const headers=['Nombre','Cliente','Fecha','Hora','Equipo','Estado','Valor ($)','Gasto ($)','Utilidad ($)'];
-      const filas=sorted.map(j=>[
-        j.name, j.client||'', j.date?fmtDate(j.date):'Sin fecha',
-        j.time?fmtTime(j.time):'', j.team||'Sin asignar', j.status,
-        Number(j.value||0), Number(j.gasto||0),
-        Number(j.value||0)-Number(j.gasto||0)
-      ]);
-      // Totales
-      const totalVal=sorted.reduce((a,j)=>a+Number(j.value||0),0);
-      const totalGasto=sorted.reduce((a,j)=>a+Number(j.gasto||0),0);
-      filas.push([]);
-      filas.push(['TOTAL','','','','','',totalVal,totalGasto,totalVal-totalGasto]);
-      const csv=[headers,...filas].map(r=>r.map(csvEscape).join(',')).join('\n');
-      descargarCSV(csv,`trabajos_${getMonthFilter()==='todos'?'todos':getMonthFilter()}.csv`);
-      window.closeExportModal();
+      cargarSheetJS(()=>{
+        const sorted=sortJobs(datos);
+        const XLSX=window.XLSX;
+        const wb=XLSX.utils.book_new();
+
+        // ── Hoja 1: Trabajos ──
+        const headers=[
+          'N°','Nombre del trabajo','Cliente','Fecha realizada','Hora','Equipo',
+          'Estado','Valor ($)','Gasto ($)','Utilidad ($)',
+          '📅 Mantención próximo año'
+        ];
+        const filas=sorted.map((j,i)=>[
+          i+1,
+          j.name||'',
+          j.client||'',
+          j.date ? fmtDate(j.date) : 'Sin fecha',
+          j.time ? fmtTime(j.time) : '',
+          j.team||'Sin asignar',
+          j.status||'',
+          Number(j.value||0),
+          Number(j.gasto||0),
+          Number(j.value||0)-Number(j.gasto||0),
+          fechaProximoAnio(j.date)
+        ]);
+
+        const totalVal=sorted.reduce((a,j)=>a+Number(j.value||0),0);
+        const totalGasto=sorted.reduce((a,j)=>a+Number(j.gasto||0),0);
+
+        filas.push([]); // fila vacía
+        filas.push(['','TOTAL','','','','','', totalVal, totalGasto, totalVal-totalGasto, '']);
+
+        const wsData=[headers, ...filas];
+        const ws=XLSX.utils.aoa_to_sheet(wsData);
+        setColWidths(ws,[4, 38, 22, 16, 10, 12, 12, 12, 12, 12, 22]);
+        XLSX.utils.book_append_sheet(wb, ws, 'Trabajos');
+
+        // ── Hoja 2: Gastos Extras ──
+        const extrasFiltrados=filtrarPorMes(extras);
+        const hExt=['N°','Descripción','Monto ($)','Fecha'];
+        const filasExt=extrasFiltrados.map((e,i)=>[
+          i+1, e.desc||'', Number(e.amount||0), e.date?fmtDate(e.date):'Sin fecha'
+        ]);
+        const totalExt=extrasFiltrados.reduce((a,e)=>a+Number(e.amount||0),0);
+        filasExt.push([]);
+        filasExt.push(['','TOTAL',totalExt,'']);
+        const wsExt=XLSX.utils.aoa_to_sheet([hExt,...filasExt]);
+        setColWidths(wsExt,[4,38,14,16]);
+        XLSX.utils.book_append_sheet(wb, wsExt, 'Gastos Extras');
+
+        // ── Hoja 3: Resumen Financiero ──
+        const totalExtras=extrasFiltrados.reduce((a,e)=>a+Number(e.amount||0),0);
+        const totalGastos=totalGasto+totalExtras;
+        const utilidad=totalVal-totalGastos;
+        const mesLabel=getMonthLabel();
+        const resumen=[
+          ['RESUMEN FINANCIERO',''],
+          ['Período', mesLabel],
+          ['',''],
+          ['Total trabajos', sorted.length],
+          ['Completados', sorted.filter(j=>j.status==='Completado').length],
+          ['Pendientes', sorted.filter(j=>j.status==='Pendiente').length],
+          ['',''],
+          ['Ingresos (trabajos completados)', sorted.filter(j=>j.status==='Completado').reduce((a,j)=>a+Number(j.value||0),0)],
+          ['Gastos de trabajos', totalGasto],
+          ['Gastos extras generales', totalExtras],
+          ['Total gastos', totalGastos],
+          ['',''],
+          ['UTILIDAD NETA', utilidad],
+        ];
+        const wsRes=XLSX.utils.aoa_to_sheet(resumen);
+        setColWidths(wsRes,[32,20]);
+        XLSX.utils.book_append_sheet(wb, wsRes, 'Resumen');
+
+        const mes=getMonthFilter()==='todos'?'todos':getMonthFilter();
+        XLSX.writeFile(wb, `GC_Climatizacion_${mes}.xlsx`);
+        window.closeExportModal();
+      });
     };
 
     window.exportarGastos=()=>{
-      const mes=getMonthLabel();
       const datos=filtrarPorMes(extras);
       if(!datos.length){ alert('No hay gastos extras para el período seleccionado.'); return; }
-      const sorted=[...datos].sort((a,b)=>(a.date||'')>(b.date||'')?1:-1);
-      const headers=['Descripción','Monto ($)','Fecha'];
-      const filas=sorted.map(e=>[e.desc, Number(e.amount||0), e.date?fmtDate(e.date):'Sin fecha']);
-      const total=sorted.reduce((a,e)=>a+Number(e.amount||0),0);
-      filas.push([]);
-      filas.push(['TOTAL',total,'']);
-      const csv=[headers,...filas].map(r=>r.map(csvEscape).join(',')).join('\n');
-      descargarCSV(csv,`gastos_extras_${getMonthFilter()==='todos'?'todos':getMonthFilter()}.csv`);
-      window.closeExportModal();
-    };
-
-    window.exportarTodo=()=>{
-      const trabajosFiltrados=filtrarPorMes(jobs);
-      const extrasFiltrados=filtrarPorMes(extras);
-      const sorted=sortJobs(trabajosFiltrados);
-      const sortedExtras=[...extrasFiltrados].sort((a,b)=>(a.date||'')>(b.date||'')?1:-1);
-      const totalVal=sorted.reduce((a,j)=>a+Number(j.value||0),0);
-      const totalGastosTrab=sorted.reduce((a,j)=>a+Number(j.gasto||0),0);
-      const totalExtras=sortedExtras.reduce((a,e)=>a+Number(e.amount||0),0);
-      const totalGastos=totalGastosTrab+totalExtras;
-      const utilidad=totalVal-totalGastos;
-
-      let csv='';
-      // Resumen
-      csv+='RESUMEN FINANCIERO\n';
-      csv+=`Período,${getMonthLabel()}\n`;
-      csv+=`Ingresos totales,$${totalVal.toLocaleString('es-CL')}\n`;
-      csv+=`Gastos de trabajos,$${totalGastosTrab.toLocaleString('es-CL')}\n`;
-      csv+=`Gastos extras,$${totalExtras.toLocaleString('es-CL')}\n`;
-      csv+=`Total gastos,$${totalGastos.toLocaleString('es-CL')}\n`;
-      csv+=`Utilidad,$${utilidad.toLocaleString('es-CL')}\n\n`;
-
-      // Trabajos
-      csv+='TRABAJOS\n';
-      const hTrab=['Nombre','Cliente','Fecha','Hora','Equipo','Estado','Valor ($)','Gasto ($)','Utilidad ($)'];
-      csv+=hTrab.map(csvEscape).join(',')+'\n';
-      sorted.forEach(j=>{
-        csv+=[ j.name, j.client||'', j.date?fmtDate(j.date):'Sin fecha',
-          j.time?fmtTime(j.time):'', j.team||'Sin asignar', j.status,
-          Number(j.value||0), Number(j.gasto||0), Number(j.value||0)-Number(j.gasto||0)
-        ].map(csvEscape).join(',')+'\n';
+      cargarSheetJS(()=>{
+        const XLSX=window.XLSX;
+        const wb=XLSX.utils.book_new();
+        const headers=['N°','Descripción','Monto ($)','Fecha'];
+        const filas=datos.map((e,i)=>[i+1, e.desc||'', Number(e.amount||0), e.date?fmtDate(e.date):'Sin fecha']);
+        const total=datos.reduce((a,e)=>a+Number(e.amount||0),0);
+        filas.push([]); filas.push(['','TOTAL',total,'']);
+        const ws=XLSX.utils.aoa_to_sheet([headers,...filas]);
+        setColWidths(ws,[4,38,14,16]);
+        XLSX.utils.book_append_sheet(wb,ws,'Gastos Extras');
+        XLSX.writeFile(wb,`GastoExtras_${getMonthFilter()}.xlsx`);
+        window.closeExportModal();
       });
-      csv+=['TOTAL','','','','','',totalVal,totalGastosTrab,totalVal-totalGastosTrab].map(csvEscape).join(',')+'\n\n';
-
-      // Gastos extras
-      csv+='GASTOS EXTRAS\n';
-      csv+='Descripción,Monto ($),Fecha\n';
-      sortedExtras.forEach(e=>{ csv+=[ e.desc, Number(e.amount||0), e.date?fmtDate(e.date):'Sin fecha' ].map(csvEscape).join(',')+'\n'; });
-      csv+=`TOTAL,${totalExtras},\n`;
-
-      descargarCSV(csv,`resumen_completo_${getMonthFilter()==='todos'?'todos':getMonthFilter()}.csv`);
-      window.closeExportModal();
     };
+
+    window.exportarTodo=()=>{ window.exportarExcel(); };
     // ── FIN EXPORTAR ────────────────────────────────────────────
 
     window.openModal=()=>{ editId=null; document.getElementById('modalTitle').textContent='Nuevo trabajo'; clearForm(); document.getElementById('modalOverlay').classList.add('open'); };
