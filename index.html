@@ -95,6 +95,18 @@
     .loading-msg{text-align:center;padding:40px;color:var(--text-muted);font-size:14px;}
     .fab{position:fixed;bottom:24px;right:20px;background:var(--text);color:#fff;border:none;border-radius:28px;padding:14px 22px;font-size:15px;font-family:'DM Sans',sans-serif;font-weight:600;cursor:pointer;box-shadow:0 4px 20px rgba(0,0,0,0.2);z-index:40;display:flex;align-items:center;gap:8px;transition:transform 0.15s;}
     .fab:active{transform:scale(0.97);}
+    .fab-export{position:fixed;bottom:24px;left:20px;background:#1A5C1A;color:#fff;border:none;border-radius:28px;padding:14px 20px;font-size:14px;font-family:'DM Sans',sans-serif;font-weight:600;cursor:pointer;box-shadow:0 4px 20px rgba(0,0,0,0.2);z-index:40;display:flex;align-items:center;gap:8px;transition:transform 0.15s;}
+    .fab-export:active{transform:scale(0.97);}
+    .export-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:100;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.2s;}
+    .export-modal-overlay.open{opacity:1;pointer-events:all;}
+    .export-modal{background:var(--surface);border-radius:20px 20px 0 0;padding:24px 20px 40px;width:100%;max-width:520px;transform:translateY(100%);transition:transform 0.25s cubic-bezier(0.32,0.72,0,1);}
+    .export-modal-overlay.open .export-modal{transform:translateY(0);}
+    .export-option{display:flex;align-items:center;justify-content:space-between;padding:14px;border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:10px;cursor:pointer;background:var(--bg);transition:background 0.15s;}
+    .export-option:hover{background:#E6F3E6;}
+    .export-option-label{font-size:15px;font-weight:500;}
+    .export-option-sub{font-size:12px;color:var(--text-muted);margin-top:2px;font-family:'DM Mono',monospace;}
+    .export-arrow{font-size:18px;color:var(--text-muted);}
+    .month-select{width:100%;padding:11px 14px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:15px;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);outline:none;margin-bottom:14px;}
 
     /* MODALES */
     .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:100;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.2s;}
@@ -160,6 +172,57 @@
   <div class="job-list" id="jobList"><div class="loading-msg">Conectando...</div></div>
 
   <button class="fab" onclick="openModal()"><span style="font-size:18px;">+</span> Agregar trabajo</button>
+  <button class="fab-export" onclick="openExportModal()">📊 Exportar Excel</button>
+
+  <!-- MODAL EXPORTAR -->
+  <div class="export-modal-overlay" id="exportModalOverlay" onclick="handleExportOverlayClick(event)">
+    <div class="export-modal">
+      <div class="modal-handle"></div>
+      <div class="modal-title">Exportar a Excel</div>
+      <div class="field">
+        <label>Seleccionar mes</label>
+        <select class="month-select" id="exportMonth">
+          <option value="todos">Todos los trabajos</option>
+          <option value="2026-01">Enero 2026</option>
+          <option value="2026-02">Febrero 2026</option>
+          <option value="2026-03">Marzo 2026</option>
+          <option value="2026-04" selected>Abril 2026</option>
+          <option value="2026-05">Mayo 2026</option>
+          <option value="2026-06">Junio 2026</option>
+          <option value="2026-07">Julio 2026</option>
+          <option value="2026-08">Agosto 2026</option>
+          <option value="2026-09">Septiembre 2026</option>
+          <option value="2026-10">Octubre 2026</option>
+          <option value="2026-11">Noviembre 2026</option>
+          <option value="2026-12">Diciembre 2026</option>
+        </select>
+      </div>
+      <div class="export-option" onclick="exportarExcel()">
+        <div>
+          <div class="export-option-label">📋 Exportar Trabajos</div>
+          <div class="export-option-sub">Nombre, cliente, valor, gasto, fecha, equipo, estado</div>
+        </div>
+        <div class="export-arrow">→</div>
+      </div>
+      <div class="export-option" onclick="exportarGastos()">
+        <div>
+          <div class="export-option-label">💸 Exportar Gastos Extras</div>
+          <div class="export-option-sub">Descripción, monto, fecha</div>
+        </div>
+        <div class="export-arrow">→</div>
+      </div>
+      <div class="export-option" onclick="exportarTodo()">
+        <div>
+          <div class="export-option-label">📦 Exportar Todo (Resumen completo)</div>
+          <div class="export-option-sub">Trabajos + gastos extras + resumen financiero</div>
+        </div>
+        <div class="export-arrow">→</div>
+      </div>
+      <div class="modal-actions" style="margin-top:10px;">
+        <button class="btn-cancel-modal" onclick="closeExportModal()">Cerrar</button>
+      </div>
+    </div>
+  </div>
 
   <!-- MODAL TRABAJO -->
   <div class="modal-overlay" id="modalOverlay" onclick="handleOverlayClick(event)">
@@ -376,6 +439,111 @@
     window.toggleStatus=async(id,status)=>{ await updateDoc(doc(db,"trabajos",id),{status:status==='Pendiente'?'Completado':'Pendiente'}); };
     window.deleteJob=async(id)=>{ if(!confirm('¿Eliminar este trabajo?')) return; await deleteDoc(doc(db,"trabajos",id)); };
     window.saveGasto=async(id)=>{ const val=Number(document.getElementById('gasto_'+id).value||0); await updateDoc(doc(db,"trabajos",id),{gasto:val}); };
+
+    // ── EXPORTAR EXCEL ──────────────────────────────────────────
+    window.openExportModal=()=>{ document.getElementById('exportModalOverlay').classList.add('open'); };
+    window.closeExportModal=()=>{ document.getElementById('exportModalOverlay').classList.remove('open'); };
+    window.handleExportOverlayClick=(e)=>{ if(e.target===document.getElementById('exportModalOverlay')) window.closeExportModal(); };
+
+    function getMonthFilter(){ return document.getElementById('exportMonth').value; }
+    function getMonthLabel(){ const sel=document.getElementById('exportMonth'); return sel.options[sel.selectedIndex].text; }
+
+    function filtrarPorMes(lista){
+      const mes=getMonthFilter();
+      if(mes==='todos') return lista;
+      return lista.filter(j=> j.date && j.date.startsWith(mes));
+    }
+
+    function csvEscape(v){ const s=String(v??''); return s.includes(',')||s.includes('"')||s.includes('\n')?`"${s.replace(/"/g,'""')}"`:s; }
+
+    function descargarCSV(contenido, nombre){
+      const BOM='\uFEFF';
+      const blob=new Blob([BOM+contenido],{type:'text/csv;charset=utf-8;'});
+      const url=URL.createObjectURL(blob);
+      const a=document.createElement('a'); a.href=url; a.download=nombre; a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    window.exportarExcel=()=>{
+      const mes=getMonthLabel();
+      const datos=filtrarPorMes(jobs);
+      if(!datos.length){ alert('No hay trabajos para el período seleccionado.'); return; }
+      const sorted=sortJobs(datos);
+      const headers=['Nombre','Cliente','Fecha','Hora','Equipo','Estado','Valor ($)','Gasto ($)','Utilidad ($)'];
+      const filas=sorted.map(j=>[
+        j.name, j.client||'', j.date?fmtDate(j.date):'Sin fecha',
+        j.time?fmtTime(j.time):'', j.team||'Sin asignar', j.status,
+        Number(j.value||0), Number(j.gasto||0),
+        Number(j.value||0)-Number(j.gasto||0)
+      ]);
+      // Totales
+      const totalVal=sorted.reduce((a,j)=>a+Number(j.value||0),0);
+      const totalGasto=sorted.reduce((a,j)=>a+Number(j.gasto||0),0);
+      filas.push([]);
+      filas.push(['TOTAL','','','','','',totalVal,totalGasto,totalVal-totalGasto]);
+      const csv=[headers,...filas].map(r=>r.map(csvEscape).join(',')).join('\n');
+      descargarCSV(csv,`trabajos_${getMonthFilter()==='todos'?'todos':getMonthFilter()}.csv`);
+      window.closeExportModal();
+    };
+
+    window.exportarGastos=()=>{
+      const mes=getMonthLabel();
+      const datos=filtrarPorMes(extras);
+      if(!datos.length){ alert('No hay gastos extras para el período seleccionado.'); return; }
+      const sorted=[...datos].sort((a,b)=>(a.date||'')>(b.date||'')?1:-1);
+      const headers=['Descripción','Monto ($)','Fecha'];
+      const filas=sorted.map(e=>[e.desc, Number(e.amount||0), e.date?fmtDate(e.date):'Sin fecha']);
+      const total=sorted.reduce((a,e)=>a+Number(e.amount||0),0);
+      filas.push([]);
+      filas.push(['TOTAL',total,'']);
+      const csv=[headers,...filas].map(r=>r.map(csvEscape).join(',')).join('\n');
+      descargarCSV(csv,`gastos_extras_${getMonthFilter()==='todos'?'todos':getMonthFilter()}.csv`);
+      window.closeExportModal();
+    };
+
+    window.exportarTodo=()=>{
+      const trabajosFiltrados=filtrarPorMes(jobs);
+      const extrasFiltrados=filtrarPorMes(extras);
+      const sorted=sortJobs(trabajosFiltrados);
+      const sortedExtras=[...extrasFiltrados].sort((a,b)=>(a.date||'')>(b.date||'')?1:-1);
+      const totalVal=sorted.reduce((a,j)=>a+Number(j.value||0),0);
+      const totalGastosTrab=sorted.reduce((a,j)=>a+Number(j.gasto||0),0);
+      const totalExtras=sortedExtras.reduce((a,e)=>a+Number(e.amount||0),0);
+      const totalGastos=totalGastosTrab+totalExtras;
+      const utilidad=totalVal-totalGastos;
+
+      let csv='';
+      // Resumen
+      csv+='RESUMEN FINANCIERO\n';
+      csv+=`Período,${getMonthLabel()}\n`;
+      csv+=`Ingresos totales,$${totalVal.toLocaleString('es-CL')}\n`;
+      csv+=`Gastos de trabajos,$${totalGastosTrab.toLocaleString('es-CL')}\n`;
+      csv+=`Gastos extras,$${totalExtras.toLocaleString('es-CL')}\n`;
+      csv+=`Total gastos,$${totalGastos.toLocaleString('es-CL')}\n`;
+      csv+=`Utilidad,$${utilidad.toLocaleString('es-CL')}\n\n`;
+
+      // Trabajos
+      csv+='TRABAJOS\n';
+      const hTrab=['Nombre','Cliente','Fecha','Hora','Equipo','Estado','Valor ($)','Gasto ($)','Utilidad ($)'];
+      csv+=hTrab.map(csvEscape).join(',')+'\n';
+      sorted.forEach(j=>{
+        csv+=[ j.name, j.client||'', j.date?fmtDate(j.date):'Sin fecha',
+          j.time?fmtTime(j.time):'', j.team||'Sin asignar', j.status,
+          Number(j.value||0), Number(j.gasto||0), Number(j.value||0)-Number(j.gasto||0)
+        ].map(csvEscape).join(',')+'\n';
+      });
+      csv+=['TOTAL','','','','','',totalVal,totalGastosTrab,totalVal-totalGastosTrab].map(csvEscape).join(',')+'\n\n';
+
+      // Gastos extras
+      csv+='GASTOS EXTRAS\n';
+      csv+='Descripción,Monto ($),Fecha\n';
+      sortedExtras.forEach(e=>{ csv+=[ e.desc, Number(e.amount||0), e.date?fmtDate(e.date):'Sin fecha' ].map(csvEscape).join(',')+'\n'; });
+      csv+=`TOTAL,${totalExtras},\n`;
+
+      descargarCSV(csv,`resumen_completo_${getMonthFilter()==='todos'?'todos':getMonthFilter()}.csv`);
+      window.closeExportModal();
+    };
+    // ── FIN EXPORTAR ────────────────────────────────────────────
 
     window.openModal=()=>{ editId=null; document.getElementById('modalTitle').textContent='Nuevo trabajo'; clearForm(); document.getElementById('modalOverlay').classList.add('open'); };
     window.closeModal=()=>{ document.getElementById('modalOverlay').classList.remove('open'); };
