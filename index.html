@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Trabajos del Equipo</title>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <style>
     :root{--bg:#F7F6F2;--surface:#FFFFFF;--border:#E4E2D9;--text:#1A1916;--text-muted:#7A7870;--pending-bg:#FEF4E4;--pending-text:#7A4800;--done-bg:#E6F3E6;--done-text:#1A5C1A;--danger:#C0392B;--danger-bg:#FDF0EE;--radius:12px;--radius-sm:8px;}
     *{box-sizing:border-box;margin:0;padding:0;}
@@ -13,6 +13,16 @@
     .top-bar h1{font-size:17px;font-weight:600;letter-spacing:-0.3px;}
     .sync-indicator{font-size:11px;font-family:'DM Mono',monospace;color:var(--text-muted);display:flex;align-items:center;gap:5px;}
     .sync-dot{width:7px;height:7px;border-radius:50%;background:#639922;}
+
+    /* TABS PRINCIPALES */
+    .main-tabs{display:flex;background:var(--surface);border-bottom:1px solid var(--border);}
+    .main-tab{flex:1;padding:12px;text-align:center;font-size:14px;font-weight:500;cursor:pointer;border:none;background:transparent;color:var(--text-muted);border-bottom:2px solid transparent;transition:all 0.15s;font-family:'DM Sans',sans-serif;}
+    .main-tab.active{color:var(--text);border-bottom-color:var(--text);font-weight:600;}
+    .main-tab:hover{background:var(--bg);}
+
+    /* VIEWS */
+    .view{display:none;}
+    .view.active{display:block;}
 
     /* RESUMEN */
     .resumen{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin:16px 16px 0;padding:16px;}
@@ -132,47 +142,154 @@
     .lightbox{position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;}
     .lightbox img{max-width:100%;max-height:90vh;border-radius:8px;}
     .lightbox-close{position:absolute;top:16px;right:20px;color:#fff;font-size:28px;cursor:pointer;background:none;border:none;}
+
+    /* ═══════════════════════════════════════════════
+       FLUJO DE CAJA STYLES
+       ═══════════════════════════════════════════════ */
+    .fc-month-selector{padding:12px 16px 0;}
+    .fc-month-select{width:100%;padding:11px 14px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:15px;font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text);outline:none;}
+
+    .fc-saldo-card{margin:16px;padding:20px;background:linear-gradient(135deg,#1A1916 0%,#2D2B26 100%);border-radius:var(--radius);color:#fff;text-align:center;}
+    .fc-saldo-label{font-size:11px;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:1px;opacity:0.6;margin-bottom:6px;}
+    .fc-saldo-num{font-size:32px;font-weight:700;font-family:'DM Mono',monospace;letter-spacing:-1px;}
+    .fc-saldo-num.negative{color:#FF6B6B;}
+    .fc-saldo-num.positive{color:#7ED687;}
+
+    .fc-breakdown{margin:0 16px;display:flex;flex-direction:column;gap:8px;}
+    .fc-section-title{font-size:13px;font-family:'DM Mono',monospace;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin:12px 0 6px;padding-left:2px;}
+    .fc-row{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;display:flex;align-items:center;justify-content:space-between;}
+    .fc-row-label{font-size:14px;font-weight:500;}
+    .fc-row-sub{font-size:11px;color:var(--text-muted);font-family:'DM Mono',monospace;margin-top:2px;}
+    .fc-row-amount{font-size:15px;font-weight:600;font-family:'DM Mono',monospace;}
+    .fc-row-amount.ingreso{color:#1A5C1A;}
+    .fc-row-amount.egreso{color:#7A4800;}
+    .fc-row-amount.danger{color:var(--danger);}
+
+    .fc-divider{height:1px;background:var(--border);margin:8px 0;}
+
+    .fc-movimientos-section{margin:12px 16px 0;}
+    .fc-mov-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+    .fc-mov-title{font-size:13px;font-family:'DM Mono',monospace;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;}
+    .fc-mov-list{display:flex;flex-direction:column;gap:6px;}
+    .fc-mov-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;display:flex;align-items:center;gap:10px;}
+    .fc-mov-icon{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+    .fc-mov-icon.combustible{background:#FEF4E4;}
+    .fc-mov-icon.cuota{background:#F0E6F6;}
+    .fc-mov-icon.otro{background:#E6F1FB;}
+    .fc-mov-info{flex:1;min-width:0;}
+    .fc-mov-desc{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .fc-mov-date{font-size:11px;color:var(--text-muted);font-family:'DM Mono',monospace;margin-top:2px;}
+    .fc-mov-amount{font-size:14px;font-weight:600;font-family:'DM Mono',monospace;color:#7A4800;white-space:nowrap;}
+    .fc-mov-del{background:none;border:none;cursor:pointer;color:#F5C6C2;font-size:16px;padding:2px 4px;flex-shrink:0;}
+    .fc-mov-del:hover{color:var(--danger);}
+    .fc-mov-empty{font-size:13px;color:var(--text-muted);padding:8px 0;}
+
+    .fc-add-btns{display:flex;gap:8px;padding:16px;flex-wrap:wrap;}
+    .fc-add-btn{flex:1;min-width:120px;padding:12px;border:1px dashed var(--border);border-radius:var(--radius-sm);background:var(--surface);cursor:pointer;text-align:center;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;color:var(--text-muted);transition:all 0.15s;}
+    .fc-add-btn:hover{border-color:var(--text);color:var(--text);background:var(--bg);}
+    .fc-add-btn span{display:block;font-size:20px;margin-bottom:4px;}
   </style>
 </head>
 <body>
   <div class="top-bar">
-    <h1>Trabajos del equipo</h1>
+    <h1>GC Climatización</h1>
     <div class="sync-indicator"><span class="sync-dot"></span> en tiempo real</div>
   </div>
 
-  <!-- RESUMEN FINANCIERO -->
-  <div class="resumen">
-    <div class="resumen-title">Resumen trabajos completados</div>
-    <div class="resumen-grid">
-      <div class="resumen-item ingresos"><div class="resumen-num ingresos" id="totalIngresos">$0</div><div class="resumen-label">Ingresos</div></div>
-      <div class="resumen-item gastos"><div class="resumen-num gastos" id="totalGastos">$0</div><div class="resumen-label">Gastos</div></div>
-      <div class="resumen-item utilidad"><div class="resumen-num utilidad" id="totalUtilidad">$0</div><div class="resumen-label">Utilidad</div></div>
+  <!-- TABS PRINCIPALES -->
+  <div class="main-tabs">
+    <button class="main-tab active" onclick="switchView('trabajos',this)">Trabajos</button>
+    <button class="main-tab" onclick="switchView('flujo',this)">Flujo de Caja</button>
+  </div>
+
+  <!-- ═══════════ VIEW: TRABAJOS ═══════════ -->
+  <div class="view active" id="viewTrabajos">
+    <div class="resumen">
+      <div class="resumen-title">Resumen trabajos completados</div>
+      <div class="resumen-grid">
+        <div class="resumen-item ingresos"><div class="resumen-num ingresos" id="totalIngresos">$0</div><div class="resumen-label">Ingresos</div></div>
+        <div class="resumen-item gastos"><div class="resumen-num gastos" id="totalGastos">$0</div><div class="resumen-label">Gastos</div></div>
+        <div class="resumen-item utilidad"><div class="resumen-num utilidad" id="totalUtilidad">$0</div><div class="resumen-label">Utilidad</div></div>
+      </div>
+    </div>
+
+    <div class="extras-section">
+      <div class="extras-header">
+        <div class="extras-title">Gastos extras generales</div>
+        <button class="btn-add-extra" onclick="openExtraModal()">+ Agregar gasto</button>
+      </div>
+      <div class="extras-list" id="extrasList"><div class="extras-empty">Sin gastos extras aún</div></div>
+    </div>
+
+    <div class="stats-row" id="statsRow"></div>
+
+    <div class="filters">
+      <button class="filter-btn active" onclick="setFilter('todos',this)">Todos</button>
+      <button class="filter-btn" onclick="setFilter('Pendiente',this)">Pendientes</button>
+      <button class="filter-btn" onclick="setFilter('Completado',this)">Completados</button>
+      <button class="filter-btn" onclick="setFilter('Equipo 1',this)">Equipo 1</button>
+      <button class="filter-btn" onclick="setFilter('Equipo 2',this)">Equipo 2</button>
+    </div>
+
+    <div class="job-list" id="jobList"><div class="loading-msg">Conectando...</div></div>
+  </div>
+
+  <!-- ═══════════ VIEW: FLUJO DE CAJA ═══════════ -->
+  <div class="view" id="viewFlujo">
+
+    <div class="fc-month-selector">
+      <select class="fc-month-select" id="fcMonth" onchange="renderFlujo()">
+        <option value="2026-01">Enero 2026</option>
+        <option value="2026-02">Febrero 2026</option>
+        <option value="2026-03">Marzo 2026</option>
+        <option value="2026-04">Abril 2026</option>
+        <option value="2026-05" selected>Mayo 2026</option>
+        <option value="2026-06">Junio 2026</option>
+        <option value="2026-07">Julio 2026</option>
+        <option value="2026-08">Agosto 2026</option>
+        <option value="2026-09">Septiembre 2026</option>
+        <option value="2026-10">Octubre 2026</option>
+        <option value="2026-11">Noviembre 2026</option>
+        <option value="2026-12">Diciembre 2026</option>
+      </select>
+    </div>
+
+    <!-- SALDO DISPONIBLE -->
+    <div class="fc-saldo-card">
+      <div class="fc-saldo-label">Saldo disponible empresa</div>
+      <div class="fc-saldo-num positive" id="fcSaldo">$0</div>
+    </div>
+
+    <!-- DESGLOSE -->
+    <div class="fc-breakdown" id="fcBreakdown"></div>
+
+    <!-- BOTONES AGREGAR -->
+    <div class="fc-add-btns">
+      <div class="fc-add-btn" onclick="openFcModal('combustible')">
+        <span>⛽</span>Cargar combustible
+      </div>
+      <div class="fc-add-btn" onclick="openFcModal('cuota')">
+        <span>🚛</span>Cuota camioneta
+      </div>
+      <div class="fc-add-btn" onclick="openFcModal('otro')">
+        <span>📝</span>Otro egreso
+      </div>
+    </div>
+
+    <!-- MOVIMIENTOS DEL MES -->
+    <div class="fc-movimientos-section">
+      <div class="fc-mov-header">
+        <div class="fc-mov-title">Movimientos del mes</div>
+      </div>
+      <div class="fc-mov-list" id="fcMovList">
+        <div class="fc-mov-empty">Sin movimientos aún</div>
+      </div>
     </div>
   </div>
 
-  <!-- GASTOS EXTRAS -->
-  <div class="extras-section">
-    <div class="extras-header">
-      <div class="extras-title">Gastos extras generales</div>
-      <button class="btn-add-extra" onclick="openExtraModal()">+ Agregar gasto</button>
-    </div>
-    <div class="extras-list" id="extrasList"><div class="extras-empty">Sin gastos extras aún</div></div>
-  </div>
-
-  <div class="stats-row" id="statsRow"></div>
-
-  <div class="filters">
-    <button class="filter-btn active" onclick="setFilter('todos',this)">Todos</button>
-    <button class="filter-btn" onclick="setFilter('Pendiente',this)">Pendientes</button>
-    <button class="filter-btn" onclick="setFilter('Completado',this)">Completados</button>
-    <button class="filter-btn" onclick="setFilter('Equipo 1',this)">Equipo 1</button>
-    <button class="filter-btn" onclick="setFilter('Equipo 2',this)">Equipo 2</button>
-  </div>
-
-  <div class="job-list" id="jobList"><div class="loading-msg">Conectando...</div></div>
-
-  <button class="fab" onclick="openModal()"><span style="font-size:18px;">+</span> Agregar trabajo</button>
-  <button class="fab-export" onclick="openExportModal()">📊 Exportar Excel</button>
+  <!-- BOTONES FLOTANTES -->
+  <button class="fab" id="fabAdd" onclick="openModal()"><span style="font-size:18px;">+</span> Agregar trabajo</button>
+  <button class="fab-export" id="fabExport" onclick="openExportModal()">📊 Exportar</button>
 
   <!-- MODAL EXPORTAR -->
   <div class="export-modal-overlay" id="exportModalOverlay" onclick="handleExportOverlayClick(event)">
@@ -198,24 +315,15 @@
         </select>
       </div>
       <div class="export-option" onclick="exportarExcel()">
-        <div>
-          <div class="export-option-label">📋 Exportar Trabajos</div>
-          <div class="export-option-sub">Nombre, cliente, valor, gasto, fecha, equipo, estado</div>
-        </div>
+        <div><div class="export-option-label">📋 Exportar Trabajos</div><div class="export-option-sub">Nombre, cliente, valor, gasto, fecha, equipo, estado</div></div>
         <div class="export-arrow">→</div>
       </div>
       <div class="export-option" onclick="exportarGastos()">
-        <div>
-          <div class="export-option-label">💸 Exportar Gastos Extras</div>
-          <div class="export-option-sub">Descripción, monto, fecha</div>
-        </div>
+        <div><div class="export-option-label">💸 Exportar Gastos Extras</div><div class="export-option-sub">Descripción, monto, fecha</div></div>
         <div class="export-arrow">→</div>
       </div>
       <div class="export-option" onclick="exportarTodo()">
-        <div>
-          <div class="export-option-label">📦 Exportar Todo (Resumen completo)</div>
-          <div class="export-option-sub">Trabajos + gastos extras + resumen financiero</div>
-        </div>
+        <div><div class="export-option-label">📦 Exportar Todo (Resumen completo)</div><div class="export-option-sub">Trabajos + gastos extras + resumen financiero</div></div>
         <div class="export-arrow">→</div>
       </div>
       <div class="modal-actions" style="margin-top:10px;">
@@ -238,18 +346,10 @@
       <div class="field"><label>Hora estimada</label><input type="time" id="fTime" /></div>
       <div class="field-row">
         <div class="field"><label>Equipo</label>
-          <select id="fTeam">
-            <option value="">Sin asignar</option>
-            <option value="Equipo 1">Equipo 1</option>
-            <option value="Equipo 2">Equipo 2</option>
-            <option value="Equipo 3">Equipo 3</option>
-          </select>
+          <select id="fTeam"><option value="">Sin asignar</option><option value="Equipo 1">Equipo 1</option><option value="Equipo 2">Equipo 2</option><option value="Equipo 3">Equipo 3</option></select>
         </div>
         <div class="field"><label>Estado</label>
-          <select id="fStatus">
-            <option value="Pendiente">Pendiente</option>
-            <option value="Completado">Completado</option>
-          </select>
+          <select id="fStatus"><option value="Pendiente">Pendiente</option><option value="Completado">Completado</option></select>
         </div>
       </div>
       <div class="field">
@@ -289,6 +389,24 @@
     </div>
   </div>
 
+  <!-- MODAL FLUJO DE CAJA -->
+  <div class="modal-overlay" id="fcModalOverlay" onclick="handleFcOverlayClick(event)">
+    <div class="modal">
+      <div class="modal-handle"></div>
+      <div class="modal-title" id="fcModalTitle">Nuevo movimiento</div>
+      <div class="field"><label>Descripción</label><input type="text" id="fcDesc" placeholder="Ej: Carga combustible" /></div>
+      <div class="field-row">
+        <div class="field"><label>Monto ($)</label><input type="number" id="fcAmount" placeholder="0" inputmode="numeric" /></div>
+        <div class="field"><label>Fecha</label><input type="date" id="fcDate" /></div>
+      </div>
+      <input type="hidden" id="fcType" value="otro" />
+      <div class="modal-actions">
+        <button class="btn-cancel-modal" onclick="closeFcModal()">Cancelar</button>
+        <button class="btn-save-modal" onclick="saveFcMov()">Guardar</button>
+      </div>
+    </div>
+  </div>
+
   <div class="lightbox" id="lightbox" style="display:none;" onclick="closeLightbox()">
     <button class="lightbox-close" onclick="closeLightbox()">✕</button>
     <img id="lightboxImg" src="" alt="foto" />
@@ -313,28 +431,42 @@
     const storage = getStorage(app);
     const trabajosRef = collection(db, "trabajos");
     const extrasRef = collection(db, "gastos_extras");
+    const flujoRef = collection(db, "flujo_caja");
 
     let jobs = [];
     let extras = [];
+    let flujoMovs = [];
     let currentFilter = 'todos';
     let editId = null;
+    let currentView = 'trabajos';
 
     function fmt(v){ return '$' + Number(v).toLocaleString('es-CL'); }
     function fmtDate(d){ if(!d) return ''; const [y,m,day]=d.split('-'); return `${day}/${m}/${y}`; }
     function fmtTime(t){ if(!t) return ''; const [h,m]=t.split(':'); const hr=parseInt(h); return `${hr>12?hr-12:hr||12}:${m} ${hr>=12?'PM':'AM'}`; }
 
-    // Ordena jobs: primero por fecha desc, luego sin fecha al final
     function sortJobs(list){
       return [...list].sort((a,b)=>{
         const da = a.date ? new Date(a.date+'T'+(a.time||'00:00')) : null;
         const db2 = b.date ? new Date(b.date+'T'+(b.time||'00:00')) : null;
-        if(!da && !db2) return 0;
-        if(!da) return 1;
-        if(!db2) return -1;
+        if(!da && !db2) return 0; if(!da) return 1; if(!db2) return -1;
         return db2 - da;
       });
     }
 
+    // ═══════ SWITCH VIEWS ═══════
+    window.switchView=(view,btn)=>{
+      currentView=view;
+      document.querySelectorAll('.main-tab').forEach(t=>t.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+      document.getElementById(view==='trabajos'?'viewTrabajos':'viewFlujo').classList.add('active');
+      // Toggle FABs
+      document.getElementById('fabAdd').style.display=view==='trabajos'?'flex':'none';
+      document.getElementById('fabExport').style.display=view==='trabajos'?'flex':'none';
+      if(view==='flujo') renderFlujo();
+    };
+
+    // ═══════ RESUMEN ═══════
     function renderResumen(){
       const completados = jobs.filter(j=>j.status==='Completado');
       const ingresos = completados.reduce((a,j)=>a+Number(j.value||0),0);
@@ -353,10 +485,8 @@
       const list=document.getElementById('extrasList');
       if(!extras.length){ list.innerHTML='<div class="extras-empty">Sin gastos extras aún</div>'; return; }
       const sorted=[...extras].sort((a,b)=>{
-        const da=a.date?new Date(a.date):null;
-        const db2=b.date?new Date(b.date):null;
-        if(!da&&!db2) return 0; if(!da) return 1; if(!db2) return -1;
-        return db2-da;
+        const da=a.date?new Date(a.date):null; const db2=b.date?new Date(b.date):null;
+        if(!da&&!db2) return 0; if(!da) return 1; if(!db2) return -1; return db2-da;
       });
       list.innerHTML=sorted.map(e=>`
         <div class="extra-card">
@@ -425,7 +555,175 @@
         </div>`).join('');
     }
 
-    function render(){ renderResumen(); renderExtras(); renderStats(); renderJobs(); }
+    // ═══════ FLUJO DE CAJA ═══════
+    function renderFlujo(){
+      const mes = document.getElementById('fcMonth').value;
+
+      // Trabajos completados del mes
+      const completadosMes = jobs.filter(j=>j.status==='Completado' && j.date && j.date.startsWith(mes));
+      const ingresosMes = completadosMes.reduce((a,j)=>a+Number(j.value||0),0);
+      const gastosTrabMes = completadosMes.reduce((a,j)=>a+Number(j.gasto||0),0);
+
+      // Gastos extras del mes
+      const extrasDelMes = extras.filter(e=>e.date && e.date.startsWith(mes));
+      const gastosExtrasMes = extrasDelMes.reduce((a,e)=>a+Number(e.amount||0),0);
+
+      const utilidadBruta = ingresosMes - gastosTrabMes - gastosExtrasMes;
+
+      // ── DISTRIBUCIÓN ──
+      // Meta base: $2.000.000
+      // Dentro de meta: Ayudante 25%, Maestro 50%, Combustible 10%, Empresa 15%
+      // Sobre excedente: Ayudante 10%, Maestro 10%, Empresa 80%
+      const META = 2000000;
+      let pagoAyudante = 0;
+      let pagoMaestro = 0;
+      let asigCombustible = 0;
+      let gananciaEmpresa = 0;
+
+      if(ingresosMes <= META){
+        // Proporción dentro de la meta
+        pagoAyudante = ingresosMes * 0.25;
+        pagoMaestro = ingresosMes * 0.50;
+        asigCombustible = ingresosMes * 0.10;
+        gananciaEmpresa = ingresosMes * 0.15;
+      } else {
+        // Base completa
+        pagoAyudante = META * 0.25;       // 500.000
+        pagoMaestro = META * 0.50;         // 1.000.000
+        asigCombustible = META * 0.10;     // 200.000
+        gananciaEmpresa = META * 0.15;     // 300.000
+        // Excedente
+        const excedente = ingresosMes - META;
+        pagoAyudante += excedente * 0.10;
+        pagoMaestro += excedente * 0.10;
+        gananciaEmpresa += excedente * 0.80;
+      }
+
+      // Movimientos del flujo de caja del mes
+      const movsDelMes = flujoMovs.filter(m=>m.date && m.date.startsWith(mes));
+      const combustibleReal = movsDelMes.filter(m=>m.type==='combustible').reduce((a,m)=>a+Number(m.amount||0),0);
+      const cuotaCamioneta = movsDelMes.filter(m=>m.type==='cuota').reduce((a,m)=>a+Number(m.amount||0),0);
+      const otrosEgresos = movsDelMes.filter(m=>m.type==='otro').reduce((a,m)=>a+Number(m.amount||0),0);
+
+      // Saldo = Ganancia empresa - gastos de trabajo - gastos extras - combustible real - cuota - otros
+      // La ganancia empresa ya es lo que queda después de pagar ayudante y maestro
+      // Pero los gastos de trabajo y extras ya se restaron de la utilidad bruta
+      // Replanteemos: El ingreso total se distribuye, la empresa se queda con su parte
+      // De la parte de la empresa se pagan: gastos de trabajos, gastos extras, combustible, cuota, otros
+      const saldoDisponible = gananciaEmpresa - gastosTrabMes - gastosExtrasMes - combustibleReal - cuotaCamioneta - otrosEgresos;
+
+      // Render saldo
+      const saldoEl = document.getElementById('fcSaldo');
+      saldoEl.textContent = fmt(saldoDisponible);
+      saldoEl.className = 'fc-saldo-num ' + (saldoDisponible >= 0 ? 'positive' : 'negative');
+
+      // Render breakdown
+      const bd = document.getElementById('fcBreakdown');
+      bd.innerHTML = `
+        <div class="fc-section-title">Ingresos del mes</div>
+        <div class="fc-row">
+          <div>
+            <div class="fc-row-label">Ingresos trabajos completados</div>
+            <div class="fc-row-sub">${completadosMes.length} trabajo${completadosMes.length!==1?'s':''}</div>
+          </div>
+          <div class="fc-row-amount ingreso">${fmt(ingresosMes)}</div>
+        </div>
+
+        <div class="fc-section-title">Distribución de ingresos</div>
+        <div class="fc-row">
+          <div>
+            <div class="fc-row-label">Pago Maestro (50%)</div>
+            <div class="fc-row-sub">${ingresosMes>META?'base + 10% excedente':'proporcional a ingresos'}</div>
+          </div>
+          <div class="fc-row-amount egreso">-${fmt(pagoMaestro)}</div>
+        </div>
+        <div class="fc-row">
+          <div>
+            <div class="fc-row-label">Pago Ayudante (25%)</div>
+            <div class="fc-row-sub">${ingresosMes>META?'base + 10% excedente':'proporcional a ingresos'}</div>
+          </div>
+          <div class="fc-row-amount egreso">-${fmt(pagoAyudante)}</div>
+        </div>
+        <div class="fc-row">
+          <div>
+            <div class="fc-row-label">Asignación combustible (10%)</div>
+            <div class="fc-row-sub">presupuesto: ${fmt(asigCombustible)}</div>
+          </div>
+          <div class="fc-row-amount egreso">-${fmt(asigCombustible)}</div>
+        </div>
+        <div class="fc-row" style="border-color:#B7D9B7;">
+          <div>
+            <div class="fc-row-label" style="font-weight:600;">Ganancia empresa (15%)</div>
+            <div class="fc-row-sub">${ingresosMes>META?'base + 80% excedente':'proporcional a ingresos'}</div>
+          </div>
+          <div class="fc-row-amount ingreso">${fmt(gananciaEmpresa)}</div>
+        </div>
+
+        <div class="fc-section-title">Egresos reales de la empresa</div>
+        <div class="fc-row">
+          <div>
+            <div class="fc-row-label">Gastos de trabajos</div>
+            <div class="fc-row-sub">materiales, insumos</div>
+          </div>
+          <div class="fc-row-amount egreso">-${fmt(gastosTrabMes)}</div>
+        </div>
+        <div class="fc-row">
+          <div>
+            <div class="fc-row-label">Gastos extras generales</div>
+            <div class="fc-row-sub">${extrasDelMes.length} registro${extrasDelMes.length!==1?'s':''}</div>
+          </div>
+          <div class="fc-row-amount egreso">-${fmt(gastosExtrasMes)}</div>
+        </div>
+        <div class="fc-row">
+          <div>
+            <div class="fc-row-label">⛽ Combustible cargado</div>
+            <div class="fc-row-sub">${movsDelMes.filter(m=>m.type==='combustible').length} carga${movsDelMes.filter(m=>m.type==='combustible').length!==1?'s':''} — presupuesto: ${fmt(asigCombustible)}</div>
+          </div>
+          <div class="fc-row-amount egreso">-${fmt(combustibleReal)}</div>
+        </div>
+        <div class="fc-row">
+          <div>
+            <div class="fc-row-label">🚛 Cuota camioneta</div>
+            <div class="fc-row-sub">pago mensual</div>
+          </div>
+          <div class="fc-row-amount egreso">-${fmt(cuotaCamioneta)}</div>
+        </div>
+        ${otrosEgresos > 0 ? `
+        <div class="fc-row">
+          <div>
+            <div class="fc-row-label">📝 Otros egresos</div>
+          </div>
+          <div class="fc-row-amount egreso">-${fmt(otrosEgresos)}</div>
+        </div>` : ''}
+      `;
+
+      // Render movimientos
+      const movList = document.getElementById('fcMovList');
+      const sortedMovs = [...movsDelMes].sort((a,b)=>{
+        const da=a.date?new Date(a.date):null; const db2=b.date?new Date(b.date):null;
+        if(!da&&!db2) return 0; if(!da) return 1; if(!db2) return -1; return db2-da;
+      });
+      if(!sortedMovs.length){
+        movList.innerHTML='<div class="fc-mov-empty">Sin movimientos este mes</div>';
+      } else {
+        movList.innerHTML=sortedMovs.map(m=>{
+          const icon = m.type==='combustible'?'⛽':m.type==='cuota'?'🚛':'📝';
+          const iconClass = m.type==='combustible'?'combustible':m.type==='cuota'?'cuota':'otro';
+          return `
+          <div class="fc-mov-card">
+            <div class="fc-mov-icon ${iconClass}">${icon}</div>
+            <div class="fc-mov-info">
+              <div class="fc-mov-desc">${m.desc}</div>
+              ${m.date?`<div class="fc-mov-date">${fmtDate(m.date)}</div>`:''}
+            </div>
+            <div class="fc-mov-amount">${fmt(m.amount)}</div>
+            <button class="fc-mov-del" onclick="deleteFcMov('${m.id}')">✕</button>
+          </div>`;
+        }).join('');
+      }
+    }
+
+    function render(){ renderResumen(); renderExtras(); renderStats(); renderJobs(); if(currentView==='flujo') renderFlujo(); }
 
     // Listeners Firebase
     const q=query(trabajosRef,orderBy("createdAt","desc"));
@@ -434,31 +732,24 @@
     const qExtras=query(extrasRef,orderBy("createdAt","desc"));
     onSnapshot(qExtras,(snapshot)=>{ extras=snapshot.docs.map(d=>({id:d.id,...d.data()})); render(); });
 
+    const qFlujo=query(flujoRef,orderBy("createdAt","desc"));
+    onSnapshot(qFlujo,(snapshot)=>{ flujoMovs=snapshot.docs.map(d=>({id:d.id,...d.data()})); if(currentView==='flujo') renderFlujo(); });
+
     // Trabajos
     window.setFilter=(f,btn)=>{ currentFilter=f; document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); renderJobs(); };
     window.toggleStatus=async(id,status)=>{ await updateDoc(doc(db,"trabajos",id),{status:status==='Pendiente'?'Completado':'Pendiente'}); };
     window.deleteJob=async(id)=>{ if(!confirm('¿Eliminar este trabajo?')) return; await deleteDoc(doc(db,"trabajos",id)); };
     window.saveGasto=async(id)=>{ const val=Number(document.getElementById('gasto_'+id).value||0); await updateDoc(doc(db,"trabajos",id),{gasto:val}); };
 
-    // ── EXPORTAR EXCEL (SheetJS) ────────────────────────────────
+    // ── EXPORTAR EXCEL ──
     window.openExportModal=()=>{ document.getElementById('exportModalOverlay').classList.add('open'); };
     window.closeExportModal=()=>{ document.getElementById('exportModalOverlay').classList.remove('open'); };
     window.handleExportOverlayClick=(e)=>{ if(e.target===document.getElementById('exportModalOverlay')) window.closeExportModal(); };
 
     function getMonthFilter(){ return document.getElementById('exportMonth').value; }
     function getMonthLabel(){ const sel=document.getElementById('exportMonth'); return sel.options[sel.selectedIndex].text; }
-
-    function filtrarPorMes(lista){
-      const mes=getMonthFilter();
-      if(mes==='todos') return lista;
-      return lista.filter(j=> j.date && j.date.startsWith(mes));
-    }
-
-    function fechaProximoAnio(dateStr){
-      if(!dateStr) return '';
-      const [y,m,d]=dateStr.split('-');
-      return `${d}/${m}/${Number(y)+1}`;
-    }
+    function filtrarPorMes(lista){ const mes=getMonthFilter(); if(mes==='todos') return lista; return lista.filter(j=> j.date && j.date.startsWith(mes)); }
+    function fechaProximoAnio(dateStr){ if(!dateStr) return ''; const [y,m,d]=dateStr.split('-'); return `${d}/${m}/${Number(y)+1}`; }
 
     function cargarSheetJS(cb){
       if(window.XLSX){ cb(); return; }
@@ -466,94 +757,39 @@
       s.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
       s.onload=cb; document.head.appendChild(s);
     }
-
-    function estilosBase(ws, rango){
-      // SheetJS community no soporta estilos nativos; usamos ancho de columnas
-      return ws;
-    }
-
-    function setColWidths(ws, widths){
-      ws['!cols'] = widths.map(w=>({wch:w}));
-    }
+    function setColWidths(ws, widths){ ws['!cols'] = widths.map(w=>({wch:w})); }
 
     window.exportarExcel=()=>{
       const datos=filtrarPorMes(jobs);
       if(!datos.length){ alert('No hay trabajos para el período seleccionado.'); return; }
       cargarSheetJS(()=>{
-        const sorted=sortJobs(datos);
-        const XLSX=window.XLSX;
-        const wb=XLSX.utils.book_new();
-
-        // ── Hoja 1: Trabajos ──
-        const headers=[
-          'N°','Nombre del trabajo','Cliente','Fecha realizada','Hora','Equipo',
-          'Estado','Valor ($)','Gasto ($)','Utilidad ($)',
-          '📅 Mantención próximo año'
-        ];
-        const filas=sorted.map((j,i)=>[
-          i+1,
-          j.name||'',
-          j.client||'',
-          j.date ? fmtDate(j.date) : 'Sin fecha',
-          j.time ? fmtTime(j.time) : '',
-          j.team||'Sin asignar',
-          j.status||'',
-          Number(j.value||0),
-          Number(j.gasto||0),
-          Number(j.value||0)-Number(j.gasto||0),
-          fechaProximoAnio(j.date)
-        ]);
-
+        const sorted=sortJobs(datos); const XLSX=window.XLSX; const wb=XLSX.utils.book_new();
+        const headers=['N°','Nombre del trabajo','Cliente','Fecha realizada','Hora','Equipo','Estado','Valor ($)','Gasto ($)','Utilidad ($)','📅 Mantención próximo año'];
+        const filas=sorted.map((j,i)=>[i+1,j.name||'',j.client||'',j.date?fmtDate(j.date):'Sin fecha',j.time?fmtTime(j.time):'',j.team||'Sin asignar',j.status||'',Number(j.value||0),Number(j.gasto||0),Number(j.value||0)-Number(j.gasto||0),fechaProximoAnio(j.date)]);
         const totalVal=sorted.reduce((a,j)=>a+Number(j.value||0),0);
         const totalGasto=sorted.reduce((a,j)=>a+Number(j.gasto||0),0);
-
-        filas.push([]); // fila vacía
-        filas.push(['','TOTAL','','','','','', totalVal, totalGasto, totalVal-totalGasto, '']);
-
-        const wsData=[headers, ...filas];
-        const ws=XLSX.utils.aoa_to_sheet(wsData);
-        setColWidths(ws,[4, 38, 22, 16, 10, 12, 12, 12, 12, 12, 22]);
-        XLSX.utils.book_append_sheet(wb, ws, 'Trabajos');
-
-        // ── Hoja 2: Gastos Extras ──
+        filas.push([]); filas.push(['','TOTAL','','','','','',totalVal,totalGasto,totalVal-totalGasto,'']);
+        const ws=XLSX.utils.aoa_to_sheet([headers,...filas]);
+        setColWidths(ws,[4,38,22,16,10,12,12,12,12,12,22]);
+        XLSX.utils.book_append_sheet(wb,ws,'Trabajos');
         const extrasFiltrados=filtrarPorMes(extras);
         const hExt=['N°','Descripción','Monto ($)','Fecha'];
-        const filasExt=extrasFiltrados.map((e,i)=>[
-          i+1, e.desc||'', Number(e.amount||0), e.date?fmtDate(e.date):'Sin fecha'
-        ]);
+        const filasExt=extrasFiltrados.map((e,i)=>[i+1,e.desc||'',Number(e.amount||0),e.date?fmtDate(e.date):'Sin fecha']);
         const totalExt=extrasFiltrados.reduce((a,e)=>a+Number(e.amount||0),0);
-        filasExt.push([]);
-        filasExt.push(['','TOTAL',totalExt,'']);
+        filasExt.push([]); filasExt.push(['','TOTAL',totalExt,'']);
         const wsExt=XLSX.utils.aoa_to_sheet([hExt,...filasExt]);
         setColWidths(wsExt,[4,38,14,16]);
-        XLSX.utils.book_append_sheet(wb, wsExt, 'Gastos Extras');
-
-        // ── Hoja 3: Resumen Financiero ──
+        XLSX.utils.book_append_sheet(wb,wsExt,'Gastos Extras');
         const totalExtras=extrasFiltrados.reduce((a,e)=>a+Number(e.amount||0),0);
         const totalGastos=totalGasto+totalExtras;
         const utilidad=totalVal-totalGastos;
         const mesLabel=getMonthLabel();
-        const resumen=[
-          ['RESUMEN FINANCIERO',''],
-          ['Período', mesLabel],
-          ['',''],
-          ['Total trabajos', sorted.length],
-          ['Completados', sorted.filter(j=>j.status==='Completado').length],
-          ['Pendientes', sorted.filter(j=>j.status==='Pendiente').length],
-          ['',''],
-          ['Ingresos (trabajos completados)', sorted.filter(j=>j.status==='Completado').reduce((a,j)=>a+Number(j.value||0),0)],
-          ['Gastos de trabajos', totalGasto],
-          ['Gastos extras generales', totalExtras],
-          ['Total gastos', totalGastos],
-          ['',''],
-          ['UTILIDAD NETA', utilidad],
-        ];
+        const resumen=[['RESUMEN FINANCIERO',''],['Período',mesLabel],['',''],['Total trabajos',sorted.length],['Completados',sorted.filter(j=>j.status==='Completado').length],['Pendientes',sorted.filter(j=>j.status==='Pendiente').length],['',''],['Ingresos (trabajos completados)',sorted.filter(j=>j.status==='Completado').reduce((a,j)=>a+Number(j.value||0),0)],['Gastos de trabajos',totalGasto],['Gastos extras generales',totalExtras],['Total gastos',totalGastos],['',''],['UTILIDAD NETA',utilidad]];
         const wsRes=XLSX.utils.aoa_to_sheet(resumen);
         setColWidths(wsRes,[32,20]);
-        XLSX.utils.book_append_sheet(wb, wsRes, 'Resumen');
-
+        XLSX.utils.book_append_sheet(wb,wsRes,'Resumen');
         const mes=getMonthFilter()==='todos'?'todos':getMonthFilter();
-        XLSX.writeFile(wb, `GC_Climatizacion_${mes}.xlsx`);
+        XLSX.writeFile(wb,`GC_Climatizacion_${mes}.xlsx`);
         window.closeExportModal();
       });
     };
@@ -562,10 +798,9 @@
       const datos=filtrarPorMes(extras);
       if(!datos.length){ alert('No hay gastos extras para el período seleccionado.'); return; }
       cargarSheetJS(()=>{
-        const XLSX=window.XLSX;
-        const wb=XLSX.utils.book_new();
+        const XLSX=window.XLSX; const wb=XLSX.utils.book_new();
         const headers=['N°','Descripción','Monto ($)','Fecha'];
-        const filas=datos.map((e,i)=>[i+1, e.desc||'', Number(e.amount||0), e.date?fmtDate(e.date):'Sin fecha']);
+        const filas=datos.map((e,i)=>[i+1,e.desc||'',Number(e.amount||0),e.date?fmtDate(e.date):'Sin fecha']);
         const total=datos.reduce((a,e)=>a+Number(e.amount||0),0);
         filas.push([]); filas.push(['','TOTAL',total,'']);
         const ws=XLSX.utils.aoa_to_sheet([headers,...filas]);
@@ -575,10 +810,9 @@
         window.closeExportModal();
       });
     };
-
     window.exportarTodo=()=>{ window.exportarExcel(); };
-    // ── FIN EXPORTAR ────────────────────────────────────────────
 
+    // ── MODALES ──
     window.openModal=()=>{ editId=null; document.getElementById('modalTitle').textContent='Nuevo trabajo'; clearForm(); document.getElementById('modalOverlay').classList.add('open'); };
     window.closeModal=()=>{ document.getElementById('modalOverlay').classList.remove('open'); };
     window.handleOverlayClick=(e)=>{ if(e.target===document.getElementById('modalOverlay')) window.closeModal(); };
@@ -591,17 +825,12 @@
 
     window.editJob=(id)=>{
       const j=jobs.find(x=>x.id===id); if(!j) return;
-      editId=id;
-      document.getElementById('modalTitle').textContent='Editar trabajo';
-      document.getElementById('fName').value=j.name;
-      document.getElementById('fClient').value=j.client||'';
-      document.getElementById('fValue').value=j.value||'';
-      document.getElementById('fDate').value=j.date||'';
-      document.getElementById('fTime').value=j.time||'';
-      document.getElementById('fStatus').value=j.status;
+      editId=id; document.getElementById('modalTitle').textContent='Editar trabajo';
+      document.getElementById('fName').value=j.name; document.getElementById('fClient').value=j.client||'';
+      document.getElementById('fValue').value=j.value||''; document.getElementById('fDate').value=j.date||'';
+      document.getElementById('fTime').value=j.time||''; document.getElementById('fStatus').value=j.status;
       document.getElementById('fTeam').value=j.team||'';
-      document.getElementById('previewPhotos').innerHTML='';
-      document.getElementById('previewFacturas').innerHTML='';
+      document.getElementById('previewPhotos').innerHTML=''; document.getElementById('previewFacturas').innerHTML='';
       document.getElementById('uploadStatus').innerHTML='';
       document.getElementById('modalOverlay').classList.add('open');
     };
@@ -643,8 +872,45 @@
       await addDoc(extrasRef,{ desc, amount:Number(amount), date:document.getElementById('eDate').value, createdAt:serverTimestamp() });
       window.closeExtraModal();
     };
-
     window.deleteExtra=async(id)=>{ if(!confirm('¿Eliminar este gasto extra?')) return; await deleteDoc(doc(db,"gastos_extras",id)); };
+
+    // ── FLUJO DE CAJA MODAL ──
+    window.openFcModal=(type)=>{
+      document.getElementById('fcType').value=type;
+      document.getElementById('fcDesc').value='';
+      document.getElementById('fcAmount').value='';
+      document.getElementById('fcDate').value=new Date().toISOString().split('T')[0];
+      if(type==='combustible'){
+        document.getElementById('fcModalTitle').textContent='Cargar combustible';
+        document.getElementById('fcDesc').value='Carga combustible';
+        document.getElementById('fcAmount').value='50000';
+      } else if(type==='cuota'){
+        document.getElementById('fcModalTitle').textContent='Cuota camioneta';
+        document.getElementById('fcDesc').value='Cuota camioneta mensual';
+        document.getElementById('fcAmount').value='800000';
+      } else {
+        document.getElementById('fcModalTitle').textContent='Nuevo egreso';
+      }
+      document.getElementById('fcModalOverlay').classList.add('open');
+    };
+    window.closeFcModal=()=>{ document.getElementById('fcModalOverlay').classList.remove('open'); };
+    window.handleFcOverlayClick=(e)=>{ if(e.target===document.getElementById('fcModalOverlay')) window.closeFcModal(); };
+
+    window.saveFcMov=async()=>{
+      const desc=document.getElementById('fcDesc').value.trim();
+      const amount=document.getElementById('fcAmount').value;
+      if(!desc||!amount){ alert('Descripción y monto son obligatorios'); return; }
+      await addDoc(flujoRef,{
+        desc,
+        amount:Number(amount),
+        date:document.getElementById('fcDate').value,
+        type:document.getElementById('fcType').value,
+        createdAt:serverTimestamp()
+      });
+      window.closeFcModal();
+    };
+
+    window.deleteFcMov=async(id)=>{ if(!confirm('¿Eliminar este movimiento?')) return; await deleteDoc(doc(db,"flujo_caja",id)); };
 
     window.openLightbox=(url)=>{ document.getElementById('lightboxImg').src=url; document.getElementById('lightbox').style.display='flex'; };
     window.closeLightbox=()=>{ document.getElementById('lightbox').style.display='none'; };
