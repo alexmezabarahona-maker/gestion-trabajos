@@ -164,6 +164,14 @@
     .fc-row-amount.ingreso{color:#1A5C1A;}
     .fc-row-amount.egreso{color:#7A4800;}
     .fc-row-amount.danger{color:var(--danger);}
+    .fc-row-amount.neutral{color:var(--text-muted);}
+
+    /* Sub-rows para el detalle de combustible */
+    .fc-subrow{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;margin-left:12px;border-left:3px solid #F5D9A8;}
+    .fc-subrow.saldo-favor{border-left-color:#B7D9B7;}
+    .fc-subrow.saldo-contra{border-left-color:#F5C6C2;}
+    .fc-subrow-label{font-size:13px;color:var(--text-muted);}
+    .fc-subrow-amount{font-size:13px;font-weight:600;font-family:'DM Mono',monospace;}
 
     .fc-divider{height:1px;background:var(--border);margin:8px 0;}
 
@@ -568,9 +576,7 @@
       const extrasDelMes = extras.filter(e=>e.date && e.date.startsWith(mes));
       const gastosExtrasMes = extrasDelMes.reduce((a,e)=>a+Number(e.amount||0),0);
 
-      const utilidadBruta = ingresosMes - gastosTrabMes - gastosExtrasMes;
-
-      // ── DISTRIBUCIÓN ──
+      // ── DISTRIBUCIÓN DE INGRESOS ──
       // Meta base: $2.000.000
       // Dentro de meta: Ayudante 25%, Maestro 50%, Combustible 10%, Empresa 15%
       // Sobre excedente: Ayudante 10%, Maestro 10%, Empresa 80%
@@ -581,44 +587,74 @@
       let gananciaEmpresa = 0;
 
       if(ingresosMes <= META){
-        // Proporción dentro de la meta
         pagoAyudante = ingresosMes * 0.25;
         pagoMaestro = ingresosMes * 0.50;
         asigCombustible = ingresosMes * 0.10;
         gananciaEmpresa = ingresosMes * 0.15;
       } else {
-        // Base completa
-        pagoAyudante = META * 0.25;       // 500.000
-        pagoMaestro = META * 0.50;         // 1.000.000
-        asigCombustible = META * 0.10;     // 200.000
-        gananciaEmpresa = META * 0.15;     // 300.000
-        // Excedente
+        pagoAyudante = META * 0.25;
+        pagoMaestro = META * 0.50;
+        asigCombustible = META * 0.10;
+        gananciaEmpresa = META * 0.15;
         const excedente = ingresosMes - META;
         pagoAyudante += excedente * 0.10;
         pagoMaestro += excedente * 0.10;
         gananciaEmpresa += excedente * 0.80;
       }
 
-      // Movimientos del flujo de caja del mes
+      // ── MOVIMIENTOS DEL MES ──
       const movsDelMes = flujoMovs.filter(m=>m.date && m.date.startsWith(mes));
       const combustibleReal = movsDelMes.filter(m=>m.type==='combustible').reduce((a,m)=>a+Number(m.amount||0),0);
       const cuotaCamioneta = movsDelMes.filter(m=>m.type==='cuota').reduce((a,m)=>a+Number(m.amount||0),0);
       const otrosEgresos = movsDelMes.filter(m=>m.type==='otro').reduce((a,m)=>a+Number(m.amount||0),0);
 
-      // Saldo = Ganancia empresa - gastos de trabajo - gastos extras - combustible real - cuota - otros
-      // La ganancia empresa ya es lo que queda después de pagar ayudante y maestro
-      // Pero los gastos de trabajo y extras ya se restaron de la utilidad bruta
-      // Replanteemos: El ingreso total se distribuye, la empresa se queda con su parte
-      // De la parte de la empresa se pagan: gastos de trabajos, gastos extras, combustible, cuota, otros
-      const saldoDisponible = gananciaEmpresa - gastosTrabMes - gastosExtrasMes - combustibleReal - cuotaCamioneta - otrosEgresos;
+      // ── LÓGICA CORREGIDA DEL COMBUSTIBLE ──
+      // El combustible cargado se descuenta del fondo de asignación combustible
+      // Si sobra del fondo → saldo a favor para la empresa
+      // Si se excede el fondo → el exceso lo paga la empresa
+      const saldoFondoCombustible = asigCombustible - combustibleReal;
+      // saldoFondoCombustible > 0 → sobra (suma a empresa)
+      // saldoFondoCombustible < 0 → faltó (resta a empresa)
+
+      // ── SALDO DISPONIBLE EMPRESA ──
+      // = Ganancia empresa
+      //   + Saldo a favor del fondo combustible (si sobró)
+      //   - Exceso del fondo combustible (si faltó, ya viene con signo negativo)
+      //   - Gastos de trabajos
+      //   - Gastos extras
+      //   - Cuota camioneta
+      //   - Otros egresos
+      const saldoDisponible = gananciaEmpresa + saldoFondoCombustible - gastosTrabMes - gastosExtrasMes - cuotaCamioneta - otrosEgresos;
 
       // Render saldo
       const saldoEl = document.getElementById('fcSaldo');
       saldoEl.textContent = fmt(saldoDisponible);
       saldoEl.className = 'fc-saldo-num ' + (saldoDisponible >= 0 ? 'positive' : 'negative');
 
-      // Render breakdown
+      // ── Render breakdown ──
       const bd = document.getElementById('fcBreakdown');
+
+      // Subfila combustible (cambia según si sobró o faltó)
+      let combustibleDetalle = '';
+      const numCargas = movsDelMes.filter(m=>m.type==='combustible').length;
+      if(asigCombustible > 0 || combustibleReal > 0){
+        combustibleDetalle = `
+          <div class="fc-subrow">
+            <div class="fc-subrow-label">⛽ Combustible cargado (${numCargas} carga${numCargas!==1?'s':''})</div>
+            <div class="fc-subrow-amount" style="color:#7A4800;">-${fmt(combustibleReal)}</div>
+          </div>
+          ${saldoFondoCombustible >= 0 ? `
+          <div class="fc-subrow saldo-favor">
+            <div class="fc-subrow-label">✓ Saldo a favor del fondo</div>
+            <div class="fc-subrow-amount" style="color:#1A5C1A;">+${fmt(saldoFondoCombustible)}</div>
+          </div>` : `
+          <div class="fc-subrow saldo-contra">
+            <div class="fc-subrow-label">⚠ Excedido del fondo (lo paga empresa)</div>
+            <div class="fc-subrow-amount" style="color:#C0392B;">${fmt(saldoFondoCombustible)}</div>
+          </div>`}
+        `;
+      }
+
       bd.innerHTML = `
         <div class="fc-section-title">Ingresos del mes</div>
         <div class="fc-row">
@@ -647,10 +683,11 @@
         <div class="fc-row">
           <div>
             <div class="fc-row-label">Asignación combustible (10%)</div>
-            <div class="fc-row-sub">presupuesto: ${fmt(asigCombustible)}</div>
+            <div class="fc-row-sub">fondo reservado para combustible</div>
           </div>
-          <div class="fc-row-amount egreso">-${fmt(asigCombustible)}</div>
+          <div class="fc-row-amount neutral">${fmt(asigCombustible)}</div>
         </div>
+        ${combustibleDetalle}
         <div class="fc-row" style="border-color:#B7D9B7;">
           <div>
             <div class="fc-row-label" style="font-weight:600;">Ganancia empresa (15%)</div>
@@ -673,13 +710,6 @@
             <div class="fc-row-sub">${extrasDelMes.length} registro${extrasDelMes.length!==1?'s':''}</div>
           </div>
           <div class="fc-row-amount egreso">-${fmt(gastosExtrasMes)}</div>
-        </div>
-        <div class="fc-row">
-          <div>
-            <div class="fc-row-label">⛽ Combustible cargado</div>
-            <div class="fc-row-sub">${movsDelMes.filter(m=>m.type==='combustible').length} carga${movsDelMes.filter(m=>m.type==='combustible').length!==1?'s':''} — presupuesto: ${fmt(asigCombustible)}</div>
-          </div>
-          <div class="fc-row-amount egreso">-${fmt(combustibleReal)}</div>
         </div>
         <div class="fc-row">
           <div>
