@@ -14,17 +14,14 @@
     .sync-indicator{font-size:11px;font-family:'DM Mono',monospace;color:var(--text-muted);display:flex;align-items:center;gap:5px;}
     .sync-dot{width:7px;height:7px;border-radius:50%;background:#639922;}
 
-    /* TABS PRINCIPALES */
     .main-tabs{display:flex;background:var(--surface);border-bottom:1px solid var(--border);}
     .main-tab{flex:1;padding:12px;text-align:center;font-size:14px;font-weight:500;cursor:pointer;border:none;background:transparent;color:var(--text-muted);border-bottom:2px solid transparent;transition:all 0.15s;font-family:'DM Sans',sans-serif;}
     .main-tab.active{color:var(--text);border-bottom-color:var(--text);font-weight:600;}
     .main-tab:hover{background:var(--bg);}
 
-    /* VIEWS */
     .view{display:none;}
     .view.active{display:block;}
 
-    /* RESUMEN */
     .resumen{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin:16px 16px 0;padding:16px;}
     .resumen-title{font-size:13px;font-family:'DM Mono',monospace;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px;}
     .resumen-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
@@ -38,7 +35,6 @@
     .resumen-num.utilidad{color:#185FA5;}
     .resumen-label{font-size:10px;color:var(--text-muted);margin-top:3px;font-family:'DM Mono',monospace;}
 
-    /* GASTOS EXTRAS */
     .extras-section{margin:12px 16px 0;}
     .extras-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
     .extras-title{font-size:13px;font-family:'DM Mono',monospace;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;}
@@ -54,19 +50,16 @@
     .btn-del-extra:hover{color:var(--danger);}
     .extras-empty{font-size:13px;color:var(--text-muted);padding:8px 0;}
 
-    /* STATS */
     .stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:12px 16px 0;}
     .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;text-align:center;}
     .stat-num{font-size:22px;font-weight:600;letter-spacing:-0.5px;}
     .stat-label{font-size:11px;color:var(--text-muted);margin-top:3px;font-family:'DM Mono',monospace;}
 
-    /* FILTERS */
     .filters{display:flex;gap:8px;padding:12px 16px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
     .filters::-webkit-scrollbar{display:none;}
     .filter-btn{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:7px 16px;font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer;color:var(--text-muted);white-space:nowrap;transition:all 0.15s;}
     .filter-btn.active{background:var(--text);color:#fff;border-color:var(--text);}
 
-    /* CARDS */
     .job-list{padding:0 16px;display:flex;flex-direction:column;gap:10px;}
     .job-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;transition:opacity 0.2s;}
     .job-card.done{opacity:0.75;}
@@ -118,7 +111,6 @@
     .export-arrow{font-size:18px;color:var(--text-muted);}
     .month-select{width:100%;padding:11px 14px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:15px;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);outline:none;margin-bottom:14px;}
 
-    /* MODALES */
     .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:100;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.2s;}
     .modal-overlay.open{opacity:1;pointer-events:all;}
     .modal{background:var(--surface);border-radius:20px 20px 0 0;padding:24px 20px 40px;width:100%;max-width:520px;transform:translateY(100%);transition:transform 0.25s cubic-bezier(0.32,0.72,0,1);max-height:90vh;overflow-y:auto;}
@@ -166,7 +158,6 @@
     .fc-row-amount.danger{color:var(--danger);}
     .fc-row-amount.neutral{color:var(--text-muted);}
 
-    /* Sub-rows para el detalle de combustible */
     .fc-subrow{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;margin-left:12px;border-left:3px solid #F5D9A8;}
     .fc-subrow.saldo-favor{border-left-color:#B7D9B7;}
     .fc-subrow.saldo-contra{border-left-color:#F5C6C2;}
@@ -196,6 +187,16 @@
     .fc-add-btn{flex:1;min-width:120px;padding:12px;border:1px dashed var(--border);border-radius:var(--radius-sm);background:var(--surface);cursor:pointer;text-align:center;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;color:var(--text-muted);transition:all 0.15s;}
     .fc-add-btn:hover{border-color:var(--text);color:var(--text);background:var(--bg);}
     .fc-add-btn span{display:block;font-size:20px;margin-bottom:4px;}
+
+    /* ── ADELANTOS ── */
+    .fc-adelanto-row{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;display:flex;align-items:center;gap:8px;margin-left:12px;border-left:3px solid #D4A8F5;}
+    .fc-adelanto-label{font-size:12px;font-family:'DM Mono',monospace;color:var(--text-muted);white-space:nowrap;flex-shrink:0;}
+    .fc-adelanto-input{flex:1;border:none;background:transparent;font-size:14px;font-family:'DM Mono',monospace;color:var(--text);outline:none;min-width:0;}
+    .fc-adelanto-input::placeholder{color:var(--text-muted);}
+    .fc-adelanto-save{font-size:12px;padding:4px 10px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface);cursor:pointer;color:var(--text-muted);white-space:nowrap;flex-shrink:0;}
+    .fc-adelanto-save:hover{background:#F0E6F6;color:#6B21A8;}
+    .fc-adelanto-saved{font-size:11px;color:#6B21A8;font-family:'DM Mono',monospace;white-space:nowrap;flex-shrink:0;opacity:0;transition:opacity 0.3s;}
+    .fc-adelanto-saved.show{opacity:1;}
   </style>
 </head>
 <body>
@@ -204,13 +205,12 @@
     <div class="sync-indicator"><span class="sync-dot"></span> en tiempo real</div>
   </div>
 
-  <!-- TABS PRINCIPALES -->
   <div class="main-tabs">
     <button class="main-tab active" onclick="switchView('trabajos',this)">Trabajos</button>
     <button class="main-tab" onclick="switchView('flujo',this)">Flujo de Caja</button>
   </div>
 
-  <!-- ═══════════ VIEW: TRABAJOS ═══════════ -->
+  <!-- VIEW: TRABAJOS -->
   <div class="view active" id="viewTrabajos">
     <div class="resumen">
       <div class="resumen-title">Resumen trabajos completados</div>
@@ -242,7 +242,7 @@
     <div class="job-list" id="jobList"><div class="loading-msg">Conectando...</div></div>
   </div>
 
-  <!-- ═══════════ VIEW: FLUJO DE CAJA ═══════════ -->
+  <!-- VIEW: FLUJO DE CAJA -->
   <div class="view" id="viewFlujo">
 
     <div class="fc-month-selector">
@@ -262,16 +262,13 @@
       </select>
     </div>
 
-    <!-- SALDO DISPONIBLE -->
     <div class="fc-saldo-card">
       <div class="fc-saldo-label">Saldo disponible empresa</div>
       <div class="fc-saldo-num positive" id="fcSaldo">$0</div>
     </div>
 
-    <!-- DESGLOSE -->
     <div class="fc-breakdown" id="fcBreakdown"></div>
 
-    <!-- BOTONES AGREGAR -->
     <div class="fc-add-btns">
       <div class="fc-add-btn" onclick="openFcModal('combustible')">
         <span>⛽</span>Cargar combustible
@@ -284,7 +281,6 @@
       </div>
     </div>
 
-    <!-- MOVIMIENTOS DEL MES -->
     <div class="fc-movimientos-section">
       <div class="fc-mov-header">
         <div class="fc-mov-title">Movimientos del mes</div>
@@ -422,7 +418,7 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, serverTimestamp, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, serverTimestamp, query, orderBy, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
     import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
     const firebaseConfig = {
@@ -440,10 +436,13 @@
     const trabajosRef = collection(db, "trabajos");
     const extrasRef = collection(db, "gastos_extras");
     const flujoRef = collection(db, "flujo_caja");
+    // Colección para adelantos: doc ID = "YYYY-MM_maestro" o "YYYY-MM_ayudante"
+    const adelantosRef = collection(db, "adelantos");
 
     let jobs = [];
     let extras = [];
     let flujoMovs = [];
+    let adelantos = {}; // { "2026-05_maestro": 150000, "2026-05_ayudante": 80000, ... }
     let currentFilter = 'todos';
     let editId = null;
     let currentView = 'trabajos';
@@ -468,7 +467,6 @@
       btn.classList.add('active');
       document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
       document.getElementById(view==='trabajos'?'viewTrabajos':'viewFlujo').classList.add('active');
-      // Toggle FABs
       document.getElementById('fabAdd').style.display=view==='trabajos'?'flex':'none';
       document.getElementById('fabExport').style.display=view==='trabajos'?'flex':'none';
       if(view==='flujo') renderFlujo();
@@ -563,23 +561,31 @@
         </div>`).join('');
     }
 
+    // ═══════ ADELANTOS ═══════
+    // Guarda adelanto en Firestore con doc ID "YYYY-MM_persona"
+    window.saveAdelanto = async (mes, persona) => {
+      const inputId = `adelanto_${persona}_${mes}`;
+      const val = Number(document.getElementById(inputId).value || 0);
+      const docId = `${mes}_${persona}`;
+      await setDoc(doc(db, 'adelantos', docId), { mes, persona, monto: val, updatedAt: serverTimestamp() });
+      adelantos[docId] = val;
+      // Mostrar confirmación
+      const savedEl = document.getElementById(`adelanto_saved_${persona}_${mes}`);
+      if(savedEl){ savedEl.classList.add('show'); setTimeout(()=>savedEl.classList.remove('show'), 2000); }
+      renderFlujo();
+    };
+
     // ═══════ FLUJO DE CAJA ═══════
-    function renderFlujo(){
+    window.renderFlujo = function renderFlujo(){
       const mes = document.getElementById('fcMonth').value;
 
-      // Trabajos completados del mes
       const completadosMes = jobs.filter(j=>j.status==='Completado' && j.date && j.date.startsWith(mes));
       const ingresosMes = completadosMes.reduce((a,j)=>a+Number(j.value||0),0);
       const gastosTrabMes = completadosMes.reduce((a,j)=>a+Number(j.gasto||0),0);
 
-      // Gastos extras del mes
       const extrasDelMes = extras.filter(e=>e.date && e.date.startsWith(mes));
       const gastosExtrasMes = extrasDelMes.reduce((a,e)=>a+Number(e.amount||0),0);
 
-      // ── DISTRIBUCIÓN DE INGRESOS ──
-      // Meta base: $2.000.000
-      // Dentro de meta: Ayudante 25%, Maestro 50%, Combustible 10%, Empresa 15%
-      // Sobre excedente: Ayudante 10%, Maestro 10%, Empresa 80%
       const META = 2000000;
       let pagoAyudante = 0;
       let pagoMaestro = 0;
@@ -602,39 +608,30 @@
         gananciaEmpresa += excedente * 0.80;
       }
 
-      // ── MOVIMIENTOS DEL MES ──
       const movsDelMes = flujoMovs.filter(m=>m.date && m.date.startsWith(mes));
       const combustibleReal = movsDelMes.filter(m=>m.type==='combustible').reduce((a,m)=>a+Number(m.amount||0),0);
       const cuotaCamioneta = movsDelMes.filter(m=>m.type==='cuota').reduce((a,m)=>a+Number(m.amount||0),0);
       const otrosEgresos = movsDelMes.filter(m=>m.type==='otro').reduce((a,m)=>a+Number(m.amount||0),0);
 
-      // ── LÓGICA CORREGIDA DEL COMBUSTIBLE ──
-      // El combustible cargado se descuenta del fondo de asignación combustible
-      // Si sobra del fondo → saldo a favor para la empresa
-      // Si se excede el fondo → el exceso lo paga la empresa
       const saldoFondoCombustible = asigCombustible - combustibleReal;
-      // saldoFondoCombustible > 0 → sobra (suma a empresa)
-      // saldoFondoCombustible < 0 → faltó (resta a empresa)
 
-      // ── SALDO DISPONIBLE EMPRESA ──
-      // = Ganancia empresa
-      //   + Saldo a favor del fondo combustible (si sobró)
-      //   - Exceso del fondo combustible (si faltó, ya viene con signo negativo)
-      //   - Gastos de trabajos
-      //   - Gastos extras
-      //   - Cuota camioneta
-      //   - Otros egresos
-      const saldoDisponible = gananciaEmpresa + saldoFondoCombustible - gastosTrabMes - gastosExtrasMes - cuotaCamioneta - otrosEgresos;
+      // Adelantos del mes
+      const adelantoMaestro = adelantos[`${mes}_maestro`] || 0;
+      const adelantoAyudante = adelantos[`${mes}_ayudante`] || 0;
 
-      // Render saldo
+      // Saldo pendiente por pagar (sueldo completo - adelanto ya entregado)
+      const saldoMaestro = Math.max(0, pagoMaestro - adelantoMaestro);
+      const saldoAyudante = Math.max(0, pagoAyudante - adelantoAyudante);
+
+      // Saldo disponible empresa: ganancia empresa + saldo combustible - gastos trabajos - gastos extras - cuota - otros - adelantos entregados
+      const saldoDisponible = gananciaEmpresa + saldoFondoCombustible - gastosTrabMes - gastosExtrasMes - cuotaCamioneta - otrosEgresos - adelantoMaestro - adelantoAyudante;
+
       const saldoEl = document.getElementById('fcSaldo');
       saldoEl.textContent = fmt(saldoDisponible);
       saldoEl.className = 'fc-saldo-num ' + (saldoDisponible >= 0 ? 'positive' : 'negative');
 
-      // ── Render breakdown ──
       const bd = document.getElementById('fcBreakdown');
 
-      // Subfila combustible (cambia según si sobró o faltó)
       let combustibleDetalle = '';
       const numCargas = movsDelMes.filter(m=>m.type==='combustible').length;
       if(asigCombustible > 0 || combustibleReal > 0){
@@ -655,6 +652,36 @@
         `;
       }
 
+      // Función para renderizar la fila de adelanto de un trabajador
+      function adelantoRow(persona, pagoTotal, adelantoActual, labelNombre) {
+        const saldoPend = Math.max(0, pagoTotal - adelantoActual);
+        const inputId = `adelanto_${persona}_${mes}`;
+        const savedId = `adelanto_saved_${persona}_${mes}`;
+        return `
+          <div class="fc-row">
+            <div style="flex:1;">
+              <div class="fc-row-label">${labelNombre}</div>
+              <div class="fc-row-sub">${ingresosMes>META?'base + 10% excedente':'proporcional a ingresos'}</div>
+            </div>
+            <div class="fc-row-amount egreso">-${fmt(pagoTotal)}</div>
+          </div>
+          <div class="fc-adelanto-row">
+            <span class="fc-adelanto-label">💸 Adelanto $</span>
+            <input class="fc-adelanto-input" type="number" inputmode="numeric" placeholder="0"
+              id="${inputId}"
+              value="${adelantoActual || ''}"
+              onkeydown="if(event.key==='Enter') saveAdelanto('${mes}','${persona}')" />
+            <button class="fc-adelanto-save" onclick="saveAdelanto('${mes}','${persona}')">Guardar</button>
+            <span class="fc-adelanto-saved" id="${savedId}">✓ guardado</span>
+          </div>
+          ${adelantoActual > 0 ? `
+          <div class="fc-subrow" style="border-left-color:#D4A8F5;">
+            <div class="fc-subrow-label">Saldo pendiente por pagar</div>
+            <div class="fc-subrow-amount" style="color:#6B21A8;">${fmt(saldoPend)}</div>
+          </div>` : ''}
+        `;
+      }
+
       bd.innerHTML = `
         <div class="fc-section-title">Ingresos del mes</div>
         <div class="fc-row">
@@ -666,20 +693,10 @@
         </div>
 
         <div class="fc-section-title">Distribución de ingresos</div>
-        <div class="fc-row">
-          <div>
-            <div class="fc-row-label">Pago Maestro (50%)</div>
-            <div class="fc-row-sub">${ingresosMes>META?'base + 10% excedente':'proporcional a ingresos'}</div>
-          </div>
-          <div class="fc-row-amount egreso">-${fmt(pagoMaestro)}</div>
-        </div>
-        <div class="fc-row">
-          <div>
-            <div class="fc-row-label">Pago Ayudante (25%)</div>
-            <div class="fc-row-sub">${ingresosMes>META?'base + 10% excedente':'proporcional a ingresos'}</div>
-          </div>
-          <div class="fc-row-amount egreso">-${fmt(pagoAyudante)}</div>
-        </div>
+
+        ${adelantoRow('maestro', pagoMaestro, adelantoMaestro, 'Pago Maestro (50%)')}
+        ${adelantoRow('ayudante', pagoAyudante, adelantoAyudante, 'Pago Ayudante (25%)')}
+
         <div class="fc-row">
           <div>
             <div class="fc-row-label">Asignación combustible (10%)</div>
@@ -725,9 +742,16 @@
           </div>
           <div class="fc-row-amount egreso">-${fmt(otrosEgresos)}</div>
         </div>` : ''}
+        ${(adelantoMaestro > 0 || adelantoAyudante > 0) ? `
+        <div class="fc-row" style="border-color:#D4A8F5;">
+          <div>
+            <div class="fc-row-label">💸 Adelantos entregados</div>
+            <div class="fc-row-sub">maestro ${fmt(adelantoMaestro)} · ayudante ${fmt(adelantoAyudante)}</div>
+          </div>
+          <div class="fc-row-amount" style="color:#6B21A8;">-${fmt(adelantoMaestro + adelantoAyudante)}</div>
+        </div>` : ''}
       `;
 
-      // Render movimientos
       const movList = document.getElementById('fcMovList');
       const sortedMovs = [...movsDelMes].sort((a,b)=>{
         const da=a.date?new Date(a.date):null; const db2=b.date?new Date(b.date):null;
@@ -751,7 +775,7 @@
           </div>`;
         }).join('');
       }
-    }
+    };
 
     function render(){ renderResumen(); renderExtras(); renderStats(); renderJobs(); if(currentView==='flujo') renderFlujo(); }
 
@@ -765,13 +789,20 @@
     const qFlujo=query(flujoRef,orderBy("createdAt","desc"));
     onSnapshot(qFlujo,(snapshot)=>{ flujoMovs=snapshot.docs.map(d=>({id:d.id,...d.data()})); if(currentView==='flujo') renderFlujo(); });
 
+    // Listener adelantos en tiempo real
+    onSnapshot(adelantosRef,(snapshot)=>{
+      adelantos = {};
+      snapshot.docs.forEach(d=>{ adelantos[d.id] = d.data().monto || 0; });
+      if(currentView==='flujo') renderFlujo();
+    });
+
     // Trabajos
     window.setFilter=(f,btn)=>{ currentFilter=f; document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); renderJobs(); };
     window.toggleStatus=async(id,status)=>{ await updateDoc(doc(db,"trabajos",id),{status:status==='Pendiente'?'Completado':'Pendiente'}); };
     window.deleteJob=async(id)=>{ if(!confirm('¿Eliminar este trabajo?')) return; await deleteDoc(doc(db,"trabajos",id)); };
     window.saveGasto=async(id)=>{ const val=Number(document.getElementById('gasto_'+id).value||0); await updateDoc(doc(db,"trabajos",id),{gasto:val}); };
 
-    // ── EXPORTAR EXCEL ──
+    // EXPORTAR EXCEL
     window.openExportModal=()=>{ document.getElementById('exportModalOverlay').classList.add('open'); };
     window.closeExportModal=()=>{ document.getElementById('exportModalOverlay').classList.remove('open'); };
     window.handleExportOverlayClick=(e)=>{ if(e.target===document.getElementById('exportModalOverlay')) window.closeExportModal(); };
@@ -842,7 +873,7 @@
     };
     window.exportarTodo=()=>{ window.exportarExcel(); };
 
-    // ── MODALES ──
+    // MODALES
     window.openModal=()=>{ editId=null; document.getElementById('modalTitle').textContent='Nuevo trabajo'; clearForm(); document.getElementById('modalOverlay').classList.add('open'); };
     window.closeModal=()=>{ document.getElementById('modalOverlay').classList.remove('open'); };
     window.handleOverlayClick=(e)=>{ if(e.target===document.getElementById('modalOverlay')) window.closeModal(); };
@@ -890,7 +921,6 @@
       window.closeModal();
     };
 
-    // Gastos extras
     window.openExtraModal=()=>{ ['eDesc','eAmount','eDate'].forEach(id=>document.getElementById(id).value=''); document.getElementById('extraModalOverlay').classList.add('open'); };
     window.closeExtraModal=()=>{ document.getElementById('extraModalOverlay').classList.remove('open'); };
     window.handleExtraOverlayClick=(e)=>{ if(e.target===document.getElementById('extraModalOverlay')) window.closeExtraModal(); };
@@ -904,7 +934,6 @@
     };
     window.deleteExtra=async(id)=>{ if(!confirm('¿Eliminar este gasto extra?')) return; await deleteDoc(doc(db,"gastos_extras",id)); };
 
-    // ── FLUJO DE CAJA MODAL ──
     window.openFcModal=(type)=>{
       document.getElementById('fcType').value=type;
       document.getElementById('fcDesc').value='';
