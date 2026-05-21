@@ -615,16 +615,14 @@
 
       const saldoFondoCombustible = asigCombustible - combustibleReal;
 
-      // Adelantos del mes
+      // Adelantos del mes (solo informativo, NO se descuentan del saldo disponible
+      // porque el dinero de los sueldos ya está separado de la ganancia empresa)
       const adelantoMaestro = adelantos[`${mes}_maestro`] || 0;
       const adelantoAyudante = adelantos[`${mes}_ayudante`] || 0;
 
-      // Saldo pendiente por pagar (sueldo completo - adelanto ya entregado)
-      const saldoMaestro = Math.max(0, pagoMaestro - adelantoMaestro);
-      const saldoAyudante = Math.max(0, pagoAyudante - adelantoAyudante);
-
-      // Saldo disponible empresa: ganancia empresa + saldo combustible - gastos trabajos - gastos extras - cuota - otros - adelantos entregados
-      const saldoDisponible = gananciaEmpresa + saldoFondoCombustible - gastosTrabMes - gastosExtrasMes - cuotaCamioneta - otrosEgresos - adelantoMaestro - adelantoAyudante;
+      // Saldo disponible empresa: ganancia empresa + saldo combustible - egresos reales
+      // Los adelantos NO se restan porque salen del dinero ya reservado para sueldos
+      const saldoDisponible = gananciaEmpresa + saldoFondoCombustible - gastosTrabMes - gastosExtrasMes - cuotaCamioneta - otrosEgresos;
 
       const saldoEl = document.getElementById('fcSaldo');
       saldoEl.textContent = fmt(saldoDisponible);
@@ -741,14 +739,6 @@
             <div class="fc-row-label">📝 Otros egresos</div>
           </div>
           <div class="fc-row-amount egreso">-${fmt(otrosEgresos)}</div>
-        </div>` : ''}
-        ${(adelantoMaestro > 0 || adelantoAyudante > 0) ? `
-        <div class="fc-row" style="border-color:#D4A8F5;">
-          <div>
-            <div class="fc-row-label">💸 Adelantos entregados</div>
-            <div class="fc-row-sub">maestro ${fmt(adelantoMaestro)} · ayudante ${fmt(adelantoAyudante)}</div>
-          </div>
-          <div class="fc-row-amount" style="color:#6B21A8;">-${fmt(adelantoMaestro + adelantoAyudante)}</div>
         </div>` : ''}
       `;
 
